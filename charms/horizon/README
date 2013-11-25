@@ -1,0 +1,4 @@
+horizon
+=======
+This directory contains OpenStack Horizon charm logic based on existing charm
+with N1KV changes
