@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# vim: syntax=python
+
+
+import os
+import subprocess
+import yaml
+import Cheetah
+import common
+
+from string import Template
+from yaml.constructor import ConstructorError
+
+
+with open('data.yaml', 'r') as f:
+   temp=f.read()
+   n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
+
+n1kv_conf_data["n1kv_conf"]["vsm_ip"]=common.relation_get('vsm_ip')
+n1kv_conf_data["n1kv_conf"]["vsm_domain_id"]=common.relation_get('vsm_domain_id')
+
+with open('data.yaml', 'w') as f:
+   f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
+common.update_n1kv_config()
+

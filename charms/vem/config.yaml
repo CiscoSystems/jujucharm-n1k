@@ -1,0 +1,21 @@
+options:
+  host_mgmt_intf:
+    type: string
+    default: "eth0"
+    description: "Management interface of the Host"
+  uplink_profile:
+    type: string
+    default: "phys eth1 profile sys-uplink"
+    description: "Port-Profile mapping for all UVEM managed Interfaces"
+  vtep_name:
+    type: string
+    default: ""
+    description: "Host VTEP name for the host on a VXGW setup"
+  vtep_port_profile:
+    type: string
+    default: ""
+    description: "Port-Profile with vxlan capability"
+  mapping:
+    type: string
+    default: ""
+    description: "Host Specific configuration mapping"

@@ -1,0 +1,88 @@
+# This is a sample N1KV configurtion file.
+# <n1kv.conf> file contains all the configuration parameters for UVEM operation.
+# Please find below a brief explanation of these parameters and their meaning. 
+# Optional Parameters and Default Values of parameters are explicitly stated.
+# Note: 
+# a) Mandatory parameters are needed for proper UVEM operation. 
+#   N1KV DP/DPA should start even if these are not specified. 
+#   But there will be functional impact. For eg: in VSM connectivity
+# b)For most of the mandatory parameters, you can use 'vemcmd' configuration mode.
+#   But to be persistent, please edit this configuration file.
+
+#
+#<vsm-connection-params>
+#
+# TAG: switch-domain
+# Description:
+# Optional: No
+# Default: 1
+switch-domain ${vsm_domain_id}
+
+# TAG: l3control-ipaddr
+# Description: IP Address of VSM's Control I/F
+# Optional: No
+# Default: n/a
+l3control-ipaddr ${vsm_ip}
+
+# TAG: system-primary-mac
+# Description: MAC address of VSM's Control I/F
+# Optional: No
+# Default: n/a
+#system-primary-mac <00:12:34:56:78:9a>
+
+# TAG: host-mgmt-intf
+# Description: Management interface of the Host
+# Optional: No (Even if not on N1KV, we need this 
+#               for Host Identification on VSM).
+# Default: n/a
+host-mgmt-intf ${host_mgmt_int}
+
+#
+#<system-port-profile-Info>
+# Description:  System Port Profiles. 
+# Optional: Yes (If there are no System Interfaces: Mgmt I/F etc)
+#
+#Trunk Profile Format
+#profile <name> trunk <vlan> 
+#profile <name> native-vlan <vlan>
+#profile <name> mtu <mtu-size>
+#
+#Access Profile
+#profile <name> access <vlan>
+#profile <name> mtu <mtu-size>
+
+#<Port-Profile Mapping>
+# Description: Port-Profile mapping for all UVEM managed Interfaces.
+# Optional: Uplinks: NO. System-Veth: NO.
+#         : Non-System Veth: YES. (Assume it will be populated by 'libvirt')
+#
+# Format: 
+# phys <port-name> profile  <profile-name>
+${uplink_profile}
+
+#Format for non-vm virt ports. ([] -->indicates optional parameters).
+# virt <port-name> profile <profile-name> [mode static|dhcp] [address <ipaddr>]
+#      [netmask <netmask ip>] [mac <macaddr>]
+#Eg:
+#virt vmknic-int1 profile profint mode dhcp mac 00:11:22:33:44:55
+#virt vmknic-int2 profile profint mode static address 192.168.2.91 netmask 255.255.255.0 mac 00:22:22:33:44:55
+#virt vmknic-int3 profile profint
+
+#ImpNote:
+#When migrating Mgmt pnic to uVEM, make sure you specify 
+#a)pnic-profile mapping
+#b)Create a new internal virtual port by specifying veth.Specify profile and 'ip/mac' details if needed. 
+
+# <host-uuid>
+# Description: Host UUID
+# Optional : YES. If not specified UVEM would pick host UUID using 'dmidecode'.
+# host-uuid <host-uuid>
+
+# <uvem-ovs-brname>
+#
+# Description: Default Open VSwitch Bridge Name
+# Optional: YES.
+# Default: n1kvdvs
+# Format: 
+# uvem-ovs-brname n1kvdvs
+

@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+# config-changed occurs everytime a new configuration value is updated (juju set)
+
+import os
+import subprocess
+import socket
+import yaml
+import Cheetah
+import common 
+ 
+from yaml.constructor import ConstructorError
+
+#Add host specific config here
+hostname = socket.gethostname()
+
+#with open('/home/ubuntu/mapping.yaml', 'r') as f:
+#     mapping = f.read()
+#hostname = "ubuntu-local-machine-0"
+
+#TODO:Send config_data instead of just mapping string
+host_conf = common.get_host_specific_config(hostname)
+vtep_name = None
+with open('data.yaml', 'r') as f:
+   temp=f.read()
+   n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
+   n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"]=host_conf['host_mgmt_intf']
+   n1kv_conf_data["n1kv_conf"]["uplink_profile"]=host_conf['uplink_profile']
+   if 'vtep_name' in host_conf:
+      vtep_name=host_conf['vtep_name']
+   if 'vtep_port_profile' in host_conf:
+      vtep_port_profile=host_conf['vtep_port_profile']
+with open('data.yaml', 'w') as f:
+   f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
+
+common.update_n1kv_config()
+
+if vtep_name:
+   create_vtep(vtep_name, vtep_port_profile)
+

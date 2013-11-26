@@ -1,0 +1,17 @@
+#!/bin/bash
+# Here do anything needed to install the service
+# i.e. apt-get install -y foo  or  bzr branch http://myserver/mycode /srv/webroot
+# Make sure this hook exits cleanly and is idempotent, common problems here are
+# failing to account for a debconf question on a dependency, or trying to pull
+# from github without installing git first.
+apt-get update
+apt-get install -y libnl1 
+apt-get install -y build-essential 
+apt-get install -y linux-headers-`uname -r` linux-headers-generic
+apt-get install -y openvswitch-switch qemu-kvm libvirt-bin virtinst dkms 
+
+mkdir /etc/n1kv
+touch /etc/n1kv/n1kv.conf
+
+dpkg -i nexus_1000v_vem-12.04-5.2.1.SK1.2.0.498.S0-1.deb
+#Once we have a VEM packaging resolved, we will use the PPA to install the uvem (DP/DPA and extKLM)
