@@ -1,0 +1,72 @@
+#!/bin/bash
+# config-changed occurs 
+# 1- after install hook when deploying the charm
+# 2- everytime a new configuration value is updated (juju set)
+
+source ./common.sh 
+
+ovsbridge=$(config-get ovsbridge)
+physicalinterfaceforovs=$(config-get physicalinterfaceforovs)
+nodeip=$(config-get nodeip)
+nodenetmask=$(config-get nodenetmask)
+nodegateway=$(config-get nodegateway)
+nodedns=$(config-get nodedns)
+vsmname=$(config-get vsmname)
+consolepts=$(config-get consolepts)
+isoimage=$(config-get isoimage)
+vsmrole=$(config-get vsmrole)
+domainid=$(config-get domainid)
+adminpasswd=$(config-get adminpasswd)
+mgmtip=$(config-get mgmtip)
+mgmtnetmask=$(config-get mgmtnetmask)
+mgmtgateway=$(config-get mgmtgateway)
+ctrlinterface=$(config-get ctrlinterface)
+ctrlmac=$(config-get ctrlmac)
+mgmtinterface=$(config-get mgmtinterface)
+mgmtmac=$(config-get mgmtmac)
+pktinterface=$(config-get pktinterface)
+pktmac=$(config-get pktmac)
+memory=$(config-get memory)
+vcpu=$(config-get vcpu)
+disksize=$(config-get disksize)
+
+finaliso=/var/spool/vsm/${vsmrole}_repacked.iso
+diskfile=/var/spool/vsm/${vsmrole}_disk
+
+export physicalinterfaceforovs ovsbridge
+export nodeip nodenetmask nodegateway nodedns
+export isoimage finaliso diskfile disksize consolepts
+export domainid vsmname mgmtip mgmtnetmask mgmtgateway adminpasswd vsmrole
+export ctrlinterface ctrlmac mgmtinterface mgmtmac pktinterface pktmac memory vcpu
+
+
+#Move the phsical interface to ovs bridge
+function update_ovs_interfaces {
+    logger "Move the physical interface to ovs bridge and restart network"
+
+    logger "using eth-config.tmpl to create eth-config"
+    cheetah fill --env --oext compiled templates/eth-config.tmpl
+    logger "copy the compiled template to /etc/network/"
+    cp templates/eth-config.compiled /etc/network/${physicalinterfaceforovs}.config
+
+    logger "restart the networking service"
+    /etc/init.d/networking restart
+}
+
+#Repack the nexus 1k iso
+function repack_iso {
+    logger "Repack the VSM ISO with the setup script enviornment variables"
+    ./hooks/lib/repackiso.py -i $isoimage -d $domainid -n $vsmname -m $mgmtip -s $mgmtnetmask -g $mgmtgateway -p $adminpasswd -r $vsmrole -f $finaliso
+}
+
+#Generate the vsm vm xml file
+function generate_vsm_vm_xml {
+    logger "Complie the vsm_vsm.xml from the template"
+    cheetah fill --env --oext compiled templates/vsm_vm.xml.tmpl
+    cp templates/vsm_vm.xml.compiled /var/spool/vsm/vsm_vm.xml
+    logger "vsm_vm.xml creation done" 
+}
+
+update_ovs_interfaces
+repack_iso
+generate_vsm_vm_xml
