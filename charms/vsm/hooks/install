@@ -1,0 +1,134 @@
+#!/bin/bash
+
+LOG_TERMINAL=0
+export LOG_TERMINAL
+
+function logger () {
+    if [ $LOG_TERMINAL -eq 1 ]
+    then
+        echo $1
+    else
+        juju-log $1
+    fi
+}
+
+
+#Remove the native bridge module if it is already loaded
+function remove_bridge_module {
+    #Check for the existence of bridge module
+    if test -e /sys/module/bridge; then
+        logger "bridge module is loaded"
+
+        #Remove the bridge module
+        /sbin/modprobe -r bridge
+    else
+        logger "bridge module is not loaded"
+    fi
+}
+
+#Install the dependency packages
+function install_vsm_dependency_pacakges {
+    logger "Starting with installation of vsm dependency packages"
+
+    #Install the kernel_hdr_pkg based on the kernel version
+    kernel_release=`uname -r`
+    logger "kernel_release is $kernel_release"
+    kernel_hdr_pkg="linux-headers-$kernel_release"
+    logger "kernel_hdr_okg is $kernel_hdr_pkg"
+
+    sudo apt-get install -y $kernel_hdr_pkg
+
+    #Install the kvm package
+    logger "Install the kvm package"
+    sudo apt-get install -y kvm
+
+    #Install the libvirt-bin package
+    logger "Install the libvirt-bin package"
+    sudo apt-get install -y libvirt-bin
+
+    #Install the virtinst package
+    logger "Install the virtinst package"
+    sudo apt-get install -y virtinst
+
+    #Install the genisoimage package
+    logger "Install the kvm package"
+    sudo apt-get install -y genisoimage
+}
+
+#Remove and disable auto start for virsh network
+function vish_remove_network {
+    #Remove virsh network
+    if test -e /usr/bin/virsh; then
+
+      logger "remove the virsh network"
+      virsh_net=`/usr/bin/virsh net-info default | grep -c 'Active: .* no'`
+      logger "virsh_net is $virsh_net"
+      if [ $virsh_net -eq 0 ]; then
+        /usr/bin/virsh net-destroy default
+      fi
+
+      #Disable the virsh autostart
+      logger "disable the virsh net-autostart"
+      virsh_auto=`/usr/bin/virsh net-info default | grep -c 'Autostart: .* no'`
+      logger "virsh_auto is $virsh_auto"
+      if [ $virsh_auto -eq 0 ]; then
+        /usr/bin/virsh net-autostart --disable default
+      fi
+
+    fi
+
+    logger "purge the ebtables"
+    aptitude -y purge ebtables
+}
+
+#Install the OVS components
+function install_ovs_components {
+
+    #Install the ovs components and all dependency packages
+    logger "Install the OVS components [openvswitch brcompat, switch & datapath source]"
+    apt-get install -y openvswitch-brcompat openvswitch-switch openvswitch-datapath-source
+
+    #check and install the openvswitch-data for the kernel version
+    logger "Install openvswitch-data based on kernel version"
+    kernel_release=`uname -r`
+    datapath=`/usr/bin/dpkg -s openvswitch-datapath-module-${kernel_release} | grep -c '^Status: install ok installed'`
+    if [ $datapath -eq 0 ]; then
+      module-assistant prepare
+      /usr/bin/module-assistant --text-mode auto-install openvswitch-datapath
+    fi
+
+    logger "Update BRCOMPAT to yes in /etc/default/openvswitch-switch"
+    cheetah fill --env --oext compiled templates/openvswitch-switch.tmpl
+    cp templates/openvswitch-switch.compiled /etc/default/openvswitch-switch
+
+    logger "Done with installation of ovs components"
+}
+
+#start the openvswitch
+function start_openvswitch {
+    logger "Start the openvswitch process"
+    /usr/sbin/service openvswitch-switch start
+
+    reload_kmod=`/usr/sbin/service openvswitch-switch status | /bin/grep -c 'ovs-brcompatd is not running'`
+    if [ $reload_kmod -eq 1 ]; then
+      logger "Force reload the new openvswitch kernel module"
+      /etc/init.d/openvswitch-switch force-reload-kmod
+    fi
+
+    logger "Add the ovs bridge"
+    /usr/bin/ovs-vsctl -- --may-exist add-br br-int
+
+}
+
+#Start the install hook
+install_vsm_dependency_pacakges
+vish_remove_network
+##remove_bridge_module
+install_ovs_components
+start_openvswitch
+
+#Create the vsm directory in /var/spool
+if [ ! -d /var/spool/vsm ]; then
+    logger "Create the /var/spool/vsm directory"
+    mkdir /var/spool/vsm
+fi
