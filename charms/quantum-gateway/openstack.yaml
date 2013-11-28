@@ -1,0 +1,41 @@
+ceph:
+  fsid: a51ce9ea-35cd-4639-9b5e-668625d3c1d8
+  monitor-secret: AQCk5+dR6NRDMRAAKUd3B8SdAD7jLJ5nbzxXXA==
+  osd-devices: /dev/vdb
+  source: cloud:precise-updates/grizzly
+cinder:
+  block-device: /dev/vdb
+  openstack-origin: cloud:precise-grizzly/updates
+  overwrite: 'true'
+glance:
+  openstack-origin: cloud:precise-grizzly/updates
+keystone:
+  admin-password: openstack
+  debug: 'true'
+  log-level: DEBUG
+  openstack-origin: cloud:precise-grizzly/updates
+nova-cloud-controller:
+  network-manager: Neutron
+  openstack-origin: cloud:precise-grizzly/updates
+nova-compute:
+  config-flags: auto_assign_floating_ip=True,compute_driver=libvirt.LibvirtDriver
+  enable-live-migration: 'True'
+  migration-auth-type: none
+  openstack-origin: cloud:precise-grizzly/updates
+  virt-type: kvm
+openstack-dashboard:
+  openstack-origin: cloud:precise-grizzly/updates
+quantum-gateway:
+  ext-port: eth1
+  openstack-origin: cloud:precise-grizzly-proposed
+swift-proxy:
+  auth-type: keystone
+  country: US
+  locale: San Francisco
+  openstack-origin: cloud:precise-grizzly/updates
+  state: CA
+  zone-assignment: auto
+swift-storage:
+  block-device: /dev/vdb
+  openstack-origin: cloud:precise-grizzly/updates
+  overwrite: 'true'
