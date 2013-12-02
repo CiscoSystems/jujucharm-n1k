@@ -78,6 +78,9 @@ class NeutronContext(object):
             #'libvirt_use_virtio_for_bridges': True,
             # ovs config
             'local_ip': unit_private_ip(),
+            'vsm_ip': config('n1kv-vsm-ip'),
+            'vsm_username': config('n1kv-vsm-username'),
+            'vsm_password': config('n1kv-vsm-password'),
         }
 
         if self.neutron_security_groups:

@@ -4,6 +4,7 @@ import os
 import shutil
 import sys
 import uuid
+import subprocess
 
 from subprocess import check_call
 from urlparse import urlparse
@@ -91,7 +92,11 @@ def install():
             log('Installing %s to /usr/bin' % f)
             shutil.copy2(f, '/usr/bin')
     [open_port(port) for port in determine_ports()]
-
+    plugin = config('quantum-plugin')
+    if (plugin == 'n1kv'):
+        command = "cp templates/havana/openrc /root/"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+        output = process.communicate()[0]
 
 @hooks.hook('config-changed')
 @restart_on_change(restart_map())
@@ -425,7 +430,6 @@ def nova_vmware_relation_joined(rid=None):
 @restart_on_change(restart_map())
 def nova_vmware_relation_changed():
     CONFIGS.write('/etc/nova/nova.conf')
-
 
 @hooks.hook('upgrade-charm')
 def upgrade_charm():

@@ -1,0 +1,10 @@
+name: swift-storage
+maintainer: Adam Gandelman <adamg@canonical.com>
+summary: "Swift storage node"
+description: |
+  Contains swift-object, swift-container and swift-account servers.
+categories:
+    - file-servers
+provides:
+  swift-storage:
+    interface: swift

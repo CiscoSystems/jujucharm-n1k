@@ -154,4 +154,15 @@ options:
     description: |
       This is uuid of the default NVP L3 Gateway Service.
   # end of NVP configuration
-
+  n1kv-vsm-username:
+    type: string
+    default: admin
+    description: Username to connect to cisco n1kv VSM
+  n1kv-vsm-password:
+    type: string
+    default: Sfish123 
+    description: Password to connect to cisco n1kv VSM 
+  n1kv-vsm-ip:
+    type: string
+    default: 10.10.10.10
+    description: IP to connect to cisco n1kv VSM 
