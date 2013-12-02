@@ -1,0 +1,13 @@
+name: vsm
+summary: The charm automates the installation of Nexus1K VSM
+maintainer: Mani Devarajan <mdevaraj@cisco.com>
+description: |
+   This charm automates the installation of Nexus1K VSM(Virtual
+   Supervisor Module). It can deploy both primary and secondary
+   VSM in a single domain.
+categories:
+  - misc
+subordinate: false
+provides:
+  dvs:
+    interface: dvs

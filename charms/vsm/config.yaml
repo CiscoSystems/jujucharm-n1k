@@ -1,0 +1,97 @@
+options:
+  ovsbridge:
+    type: string
+    default: "br0"
+    description: "ovs bridge behind which the vsm will be attached"
+  physicalinterfaceforovs:
+    type: string
+    default: "eth0"
+    description: "physical uplink interface for the ovs bridge"
+  nodeip:
+    type: string
+    default: "20.1.1.100"
+    description: "node ip address in which the vsm vm will be spawned"
+  nodenetmask:
+    type: string
+    default: "255.255.255.0"
+    description: "node netmask in which the vsm vm will be spawned"
+  nodegateway:
+    type: string
+    default: "20.1.1.1"
+    description: "node gateway in which the vsm vm will be spawned"
+  nodedns:
+    type: string
+    default: "dns.cisco.com"
+    description: "node dns name server address"
+  vsmname:
+    type: string
+    default: "vsm-p"
+    description: "VSM virtual machine name"
+  consolepts:
+    type: int
+    default: 2
+    description: "VSM virtual machine name"
+  isoimage:
+    type: string
+    default: "n1000v-dk9.5.2.1.SK1.2.0.8.iso"
+    description: "VSM virtual machine name"
+  vsmrole:
+    type: string
+    default: "primary"
+    description: "This VSMs role primary or secondary"
+  domainid:
+    type: int
+    default: 101
+    description: "Domain id this vsm will be controlling"
+  adminpasswd:
+    type: string
+    default: "N1k12345"
+    description: "admin password for the VSM VM"
+  mgmtip:
+    type: string
+    default: "20.1.1.101"
+    description: "VSM VMs management ip address"
+  mgmtnetmask:
+    type: string
+    default: "255.255.255.0"
+    description: "VSM VMs management netmask"
+  mgmtgateway:
+    type: string
+    default: "20.1.1.1"
+    description: "VSM VMs management gateway"
+  ctrlinterface:
+    type: string
+    default: "tap0"
+    description: "Control tap interface name"
+  ctrlmac:
+    type: string
+    default: "00:02:3d:72:40:00"
+    description: "Mac address of Control interface from VSM"
+  mgmtinterface:
+    type: string
+    default: "tap1"
+    description: "Management tap interface name"
+  mgmtmac:
+    type: string
+    default: "00:02:3d:72:40:02"
+    description: "Management tap interface name"
+  pktinterface:
+    type: string
+    default: "tap2"
+    description: "Packet tap interface name"
+  pktmac:
+    type: string
+    default: "00:02:3d:72:40:03"
+    description: "Packet tap interface name"
+  memory:
+    type: int
+    default: 2048000
+    description: "Memory for the VSM VM"
+  vcpu:
+    type: int
+    default: 2
+    description: "Number of VCPU for the VSM VM"
+  disksize:
+    type: int
+    default: 4
+    description: "Disk size for the VSM VM"
