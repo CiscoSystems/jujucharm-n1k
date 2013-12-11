@@ -1,0 +1,284 @@
+environment: vmaas
+machines:
+  "0":
+    agent-state: started
+    agent-version: 1.16.3
+    dns-name: maas-node-8.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-804ac0d8-441d-11e3-b6a9-525400d1e009/
+    series: precise
+  "1":
+    agent-state: started
+    agent-version: 1.16.3
+    dns-name: maas-node-5.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-81f59dea-441d-11e3-91a9-525400d1e009/
+    series: precise
+  "2":
+    agent-state: pending
+    dns-name: maas-node-10.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-802307b4-441d-11e3-b6a9-525400d1e009/
+    series: precise
+  "3":
+    agent-state: started
+    agent-version: 1.16.3
+    dns-name: maas-node-9.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-808461e4-441d-11e3-91a9-525400d1e009/
+    series: precise
+  "4":
+    agent-state: started
+    agent-version: 1.16.3
+    dns-name: maas-node-3.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-80a0e1a2-441d-11e3-b6a9-525400d1e009/
+    series: precise
+  "5":
+    agent-state: started
+    agent-version: 1.16.3
+    dns-name: maas-node-1.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-3a8712c6-441e-11e3-b6a9-525400d1e009/
+    series: precise
+  "6":
+    agent-state: started
+    agent-version: 1.16.3
+    dns-name: maas-node-11.vmaas.devel
+    instance-id: /MAAS/api/1.0/nodes/node-7f4b84ce-441d-11e3-b6a9-525400d1e009/
+    series: precise
+services:
+  ceph:
+    charm: cs:precise/ceph-18
+    exposed: false
+    relations:
+      client:
+      - cinder
+      - glance
+      mon:
+      - ceph
+    units:
+      ceph/0:
+        agent-state: started
+        agent-version: 1.16.3
+        machine: "0"
+        public-address: maas-node-8.vmaas.devel
+  cinder:
+    charm: cs:precise/cinder-14
+    exposed: false
+    relations:
+      amqp:
+      - rabbitmq-server
+      ceph:
+      - ceph
+      cinder-volume-service:
+      - nova-cloud-controller
+      cluster:
+      - cinder
+      identity-service:
+      - keystone
+      shared-db:
+      - mysql
+    units:
+      cinder/0:
+        agent-state: pending
+        machine: "2"
+        public-address: maas-node-10.vmaas.devel
+  glance:
+    charm: cs:precise/glance-26
+    exposed: false
+    relations:
+      ceph:
+      - ceph
+      cluster:
+      - glance
+      identity-service:
+      - keystone
+      image-service:
+      - nova-cloud-controller
+      - nova-compute
+      shared-db:
+      - mysql
+    units:
+      glance/0:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  keystone:
+    charm: cs:precise/keystone-24
+    exposed: false
+    relations:
+      cluster:
+      - keystone
+      identity-service:
+      - cinder
+      - glance
+      - nova-cloud-controller
+      - openstack-dashboard
+      - swift-proxy
+      shared-db:
+      - mysql
+    units:
+      keystone/0:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  mysql:
+    charm: cs:precise/mysql-29
+    exposed: false
+    relations:
+      cluster:
+      - mysql
+      shared-db:
+      - cinder
+      - glance
+      - keystone
+      - nova-cloud-controller
+      - nova-compute
+      - quantum-gateway
+    units:
+      mysql/0:
+        agent-state: started
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  nova-cloud-controller:
+    charm: local:precise/nova-cloud-controller-316
+    exposed: false
+    relations:
+      amqp:
+      - rabbitmq-server
+      cinder-volume-service:
+      - cinder
+      cloud-compute:
+      - nova-compute
+      cluster:
+      - nova-cloud-controller
+      identity-service:
+      - keystone
+      image-service:
+      - glance
+      quantum-network-service:
+      - quantum-gateway
+      shared-db:
+      - mysql
+    units:
+      nova-cloud-controller/0:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  nova-compute:
+    charm: cs:precise/nova-compute-17
+    exposed: false
+    relations:
+      amqp:
+      - rabbitmq-server
+      cloud-compute:
+      - nova-cloud-controller
+      compute-peer:
+      - nova-compute
+      image-service:
+      - glance
+      shared-db:
+      - mysql
+    units:
+      nova-compute/0:
+        agent-state: pending
+        machine: "2"
+        public-address: maas-node-10.vmaas.devel
+      nova-compute/1:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "3"
+        public-address: maas-node-9.vmaas.devel
+      nova-compute/2:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "4"
+        public-address: maas-node-3.vmaas.devel
+      nova-compute/3:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "5"
+        public-address: maas-node-1.vmaas.devel
+      nova-compute/4:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "6"
+        public-address: maas-node-11.vmaas.devel
+  openstack-dashboard:
+    charm: cs:precise/openstack-dashboard-11
+    exposed: true
+    relations:
+      cluster:
+      - openstack-dashboard
+      identity-service:
+      - keystone
+    units:
+      openstack-dashboard/0:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  quantum-gateway:
+    charm: local:precise/quantum-gateway-113
+    exposed: false
+    relations:
+      amqp:
+      - rabbitmq-server
+      cluster:
+      - quantum-gateway
+      quantum-network-service:
+      - nova-cloud-controller
+      shared-db:
+      - mysql
+    units:
+      quantum-gateway/0:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  rabbitmq-server:
+    charm: cs:precise/rabbitmq-server-16
+    exposed: false
+    relations:
+      amqp:
+      - cinder
+      - nova-cloud-controller
+      - nova-compute
+      - quantum-gateway
+      cluster:
+      - rabbitmq-server
+    units:
+      rabbitmq-server/0:
+        agent-state: pending
+        agent-version: 1.16.3
+        machine: "1"
+        public-address: maas-node-5.vmaas.devel
+  swift-proxy:
+    charm: cs:precise/swift-proxy-30
+    exposed: false
+    relations:
+      cluster:
+      - swift-proxy
+      identity-service:
+      - keystone
+      swift-storage:
+      - swift-storage
+    units:
+      swift-proxy/0:
+        agent-state: started
+        agent-version: 1.16.3
+        machine: "0"
+        open-ports:
+        - 8080/tcp
+        public-address: maas-node-8.vmaas.devel
+  swift-storage:
+    charm: cs:precise/swift-storage-18
+    exposed: false
+    relations:
+      swift-storage:
+      - swift-proxy
+    units:
+      swift-storage/0:
+        agent-state: started
+        agent-version: 1.16.3
+        machine: "0"
+        public-address: maas-node-8.vmaas.devel

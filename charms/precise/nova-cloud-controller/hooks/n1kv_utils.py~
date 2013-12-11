@@ -1,0 +1,68 @@
+#!/usr/bin/python
+# vim: syntax=python
+#------------------------------------------------------------------------------                                                                                                     
+# This file includes supporting functions to configure parameters                                                                                                                   
+# in openrc and cisco_plugins.ini                                                                                                                                                   
+#                                                                                                                                                                                   
+#------------------------------------------------------------------------------
+import commands
+import json
+import os
+import re
+import signal
+import socket
+import subprocess
+import sys
+import time
+import yaml
+import Cheetah
+import common
+import pickle
+
+from os import chmod
+from os import remove
+from os.path import exists
+from string import Template
+from yaml.constructor import ConstructorError
+from Cheetah.Template import Template
+
+#------------------------------------------------------------------------------ 
+
+#------------------------------------------------------------------------------ 
+def juju_log(message=None):
+    return (subprocess.call(['juju-log', str(message)]) == 0)
+
+#------------------------------------------------------------------------------
+# get_openrc_config: Gets and applies the config required in openrc 
+#
+#------------------------------------------------------------------------------
+def get_openrc_config(hostname):
+     default_conf = dict()
+     default_conf['os_username']=config_get('os_username')
+     default_conf['os_password']=config_get('os_password')
+     return default_conf
+
+#------------------------------------------------------------------------------                                                                                                     # get_openrc_config: Gets and applies the config required in cisco_plugin.ini                                                                                                       
+#                                                                                                                                                                                   
+#------------------------------------------------------------------------------                                                                                                      
+def get_cisco_plugin_ini_config(hostname):
+    default_cisco_ini_conf = dict()
+    default_cisco_ini_conf['n1kv_vsm_ip']=config_get('n1kv_vsm_ip')
+    default_cisco_ini_conf['n1kv_vsm_username']=config_get('n1kv_vsm_username')
+    default_cisco_ini_conf['n1kv_vsm__password']=config_get('n1kv_vsm_password')
+
+    juju_log("apply cisco_plugin_ini config")
+    with open('config.yaml', 'r') as f:
+        temp=f.read()
+    conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
+    t2 = Template( file = 'templates/cisco_plugin.ini',
+        searchList = [{ 'host_mgmt_intf':n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"],
+                        'uplink_profile':n1kv_conf_data["n1kv_conf"]["uplink_profile"],
+                        'vsm_ip':n1kv_conf_data["n1kv_conf"]["vsm_ip"],
+                        'vsm_domain_id':n1kv_conf_data["n1kv_conf"]["vsm_domain_id"]
+                      }])
+   juju_log(str(t2))
+   outfile = file('/etc/n1kv/n1kv.conf', 'w')
+   outfile.write(str(t2))
+   outfile.close()
+   subprocess.call(["service", "n1kv", "restart"])

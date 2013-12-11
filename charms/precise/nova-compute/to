@@ -1,0 +1,156 @@
+./hooks/upgrade-charm:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/upgrade-charm:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/upgrade-charm:            and neutron_plugin() == 'ovs'):
+./hooks/upgrade-charm:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/upgrade-charm:            and neutron_plugin() == 'ovs'):
+./hooks/ceph-relation-joined:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/ceph-relation-joined:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/ceph-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/ceph-relation-joined:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/ceph-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/start:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/start:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/start:            and neutron_plugin() == 'ovs'):
+./hooks/start:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/start:            and neutron_plugin() == 'ovs'):
+./hooks/shared-db-relation-joined:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/shared-db-relation-joined:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/shared-db-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/shared-db-relation-joined:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/shared-db-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/amqp-relation-changed:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/amqp-relation-changed:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/amqp-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/amqp-relation-changed:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/amqp-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/shared-db-relation-broken:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/shared-db-relation-broken:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/shared-db-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/shared-db-relation-broken:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/shared-db-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/ceph-relation-changed:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/ceph-relation-changed:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/ceph-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/ceph-relation-changed:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/ceph-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/shared-db-relation-changed:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/shared-db-relation-changed:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/shared-db-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/shared-db-relation-changed:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/shared-db-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/nrpe-external-master-relation-joined:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/nrpe-external-master-relation-joined:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/nrpe-external-master-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/nrpe-external-master-relation-joined:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/nrpe-external-master-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/ceph-relation-broken:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/ceph-relation-broken:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/ceph-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/ceph-relation-broken:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/ceph-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/stop:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/stop:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/stop:            and neutron_plugin() == 'ovs'):
+./hooks/stop:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/stop:            and neutron_plugin() == 'ovs'):
+./hooks/amqp-relation-joined:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/amqp-relation-joined:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/amqp-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/amqp-relation-joined:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/amqp-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/image-service-relation-broken:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/image-service-relation-broken:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/image-service-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/image-service-relation-broken:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/image-service-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/nova_compute_context.py:from charmhelpers.contrib.network.ovs import add_bridge
+./hooks/nova_compute_context.py:    def ovs_ctxt(self):
+./hooks/nova_compute_context.py:        ovs_ctxt = super(NeutronComputeContext, self).ovs_ctxt()
+./hooks/nova_compute_context.py:        if not ovs_ctxt:
+./hooks/nova_compute_context.py:        ovs_ctxt['local_ip'] = get_host_ip(unit_get('private-address'))
+./hooks/nova_compute_context.py:        return ovs_ctxt
+./hooks/install:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/install:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/install:            and neutron_plugin() == 'ovs'):
+./hooks/install:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/install:            and neutron_plugin() == 'ovs'):
+./hooks/nova_compute_utils.py:    # NOTE(james-page): only required for ovs plugin right now
+./hooks/nova_compute_utils.py:        if plugin == 'ovs':
+./hooks/compute-peer-relation-joined:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/compute-peer-relation-joined:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/compute-peer-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/compute-peer-relation-joined:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/compute-peer-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/amqp-relation-broken:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/amqp-relation-broken:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/amqp-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/amqp-relation-broken:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/amqp-relation-broken:            and neutron_plugin() == 'ovs'):
+./hooks/nova_compute_hooks.py:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/nova_compute_hooks.py:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/nova_compute_hooks.py:            and neutron_plugin() == 'ovs'):
+./hooks/nova_compute_hooks.py:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/nova_compute_hooks.py:            and neutron_plugin() == 'ovs'):
+./hooks/charmhelpers/contrib/openstack/neutron.py:        'ovs': {
+./hooks/charmhelpers/contrib/openstack/neutron.py:                      'ovs_quantum_plugin.ini',
+./hooks/charmhelpers/contrib/openstack/neutron.py:            'driver': 'quantum.plugins.openvswitch.ovs_quantum_plugin.'
+./hooks/charmhelpers/contrib/openstack/neutron.py:        'ovs': {
+./hooks/charmhelpers/contrib/openstack/neutron.py:                      'ovs_neutron_plugin.ini',
+./hooks/charmhelpers/contrib/openstack/neutron.py:            'driver': 'neutron.plugins.openvswitch.ovs_neutron_plugin.'
+./hooks/charmhelpers/contrib/openstack/context.py:    def ovs_ctxt(self):
+./hooks/charmhelpers/contrib/openstack/context.py:        ovs_ctxt = {
+./hooks/charmhelpers/contrib/openstack/context.py:            'neutron_plugin': 'ovs',
+./hooks/charmhelpers/contrib/openstack/context.py:        return ovs_ctxt
+./hooks/charmhelpers/contrib/openstack/context.py:        if self.plugin == 'ovs':
+./hooks/charmhelpers/contrib/openstack/context.py:            ctxt.update(self.ovs_ctxt())
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:    subprocess.check_call(["ovs-vsctl", "--", "--may-exist", "add-br", name])
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:    subprocess.check_call(["ovs-vsctl", "--", "--if-exists", "del-br", name])
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:    subprocess.check_call(["ovs-vsctl", "--", "--may-exist", "add-port",
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:    subprocess.check_call(["ovs-vsctl", "--", "--if-exists", "del-port",
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:    log('Setting manager for local ovs to {}'.format(manager))
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:    subprocess.check_call(['ovs-vsctl', 'set-manager',
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:CERT_PATH = '/etc/openvswitch/ovsclient-cert.pem'
+./hooks/charmhelpers/contrib/network/ovs/__init__.py:        log('Reading ovs certificate from {}'.format(CERT_PATH))
+./hooks/cloud-compute-relation-joined:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/cloud-compute-relation-joined:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/cloud-compute-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/cloud-compute-relation-joined:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/cloud-compute-relation-joined:            and neutron_plugin() == 'ovs'):
+./hooks/image-service-relation-changed:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/image-service-relation-changed:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/image-service-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/image-service-relation-changed:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/image-service-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/cloud-compute-relation-changed:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/cloud-compute-relation-changed:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/cloud-compute-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/cloud-compute-relation-changed:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/cloud-compute-relation-changed:            and neutron_plugin() == 'ovs'):
+./hooks/config-changed:    if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
+./hooks/config-changed:    if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
+./hooks/config-changed:            and neutron_plugin() == 'ovs'):
+./hooks/config-changed:    if nm in ['quantum', 'neutron'] and plugin == 'ovs':
+./hooks/config-changed:            and neutron_plugin() == 'ovs'):
+./config.yaml:    default: ovs
+./config.yaml:        ovs - OpenVSwitch
+./charm-helpers.yaml:    - contrib.network.ovs
+Binary file ./.bzr/checkout/dirstate matches
+./unit_tests/test_nova_compute_contexts.py:    'quantum_plugin': 'ovs',
+./unit_tests/test_nova_compute_contexts.py:    'core_plugin': 'quantum.plugins.openvswitch.ovs_quantum_plugin.'
+./unit_tests/test_nova_compute_contexts.py:    'ovs_firewall_driver': 'quantum.agent.linux.iptables_firewall.'
+./unit_tests/test_nova_compute_contexts.py:    'quantum_plugin': 'ovs',
+./unit_tests/test_nova_compute_contexts.py:        plugin.return_value = 'ovs'
+./unit_tests/test_nova_compute_contexts.py:                'quantum_plugin': 'ovs',
+./unit_tests/test_nova_compute_utils.py:        n_plugin.return_value = 'ovs'
+./unit_tests/test_nova_compute_utils.py:        n_plugin.return_value = 'ovs'
+./unit_tests/test_nova_compute_utils.py:    def test_resource_map_quantum_ovs(self, net_man, _plugin):
+./unit_tests/test_nova_compute_utils.py:        _plugin.return_value = 'ovs'
+./unit_tests/test_nova_compute_utils.py:            '/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini': {
+./unit_tests/test_nova_compute_hooks.py:            self.neutron_plugin.return_value = 'ovs'
+./unit_tests/test_nova_compute_hooks.py:    def test_db_joined_quantum_ovs(self):
+./unit_tests/test_nova_compute_hooks.py:        self.neutron_plugin.return_value = 'ovs'
+./unit_tests/test_nova_compute_hooks.py:    def test_db_changed_with_data_and_quantum_ovs(self, configs):
+./unit_tests/test_nova_compute_hooks.py:        self.neutron_plugin.return_value = 'ovs'
+./templates/grizzly/nova.conf:{% if neutron_plugin and neutron_plugin == 'ovs' -%}
+./templates/havana/nova.conf:{% if neutron_plugin and neutron_plugin == 'ovs' -%}
+./templates/folsom/nova.conf:{% if neutron_plugin and neutron_plugin == 'ovs' -%}

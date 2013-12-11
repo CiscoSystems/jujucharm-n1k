@@ -1,0 +1,44 @@
+options:
+  plugin:
+    default: ovs
+    type: string
+    description: |
+      Network configuration plugin to use for quantum.
+      Supported values include:
+      .
+        ovs - OpenVSwitch
+        nvp - Nicira NVP
+        n1kv - Cisco N1kv
+  ext-port:
+    type: string
+    description: |
+      External port to use for routing of instance
+      traffic to the external public network.
+  openstack-origin:
+    type: string
+    default: distro
+    description: |
+      Optional configuration to support use of additional sources such as:
+      .
+        - ppa:myteam/ppa
+        - cloud:precise-folsom/proposed
+        - cloud:precise-folsom
+        - deb http://my.archive.com/ubuntu main|KEYID
+      .
+      Note that quantum/neutron is only supported >= Folsom.
+  rabbit-user:
+    type: string
+    default: neutron
+  rabbit-vhost:
+    type: string
+    default: openstack
+  n1kv-source:
+    type: string
+    default: distro
+    description: |
+      Optional configuration to support use of additional sources such as:
+      .
+        - ppa:myteam/ppa
+        - deb http://my.archive.com/ubuntu main|KEYID
+      .
+      Note that this is used only for Cisco n1kv plugin.

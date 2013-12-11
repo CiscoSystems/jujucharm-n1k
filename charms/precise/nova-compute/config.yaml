@@ -1,0 +1,113 @@
+options:
+  openstack-origin:
+    default: distro
+    type: string
+    description: |
+      Repository from which to install.  May be one of the following:
+      distro (default), ppa:somecustom/ppa, a deb url sources entry,
+      or a supported Cloud Archive release pocket.
+
+      Supported Cloud Archive sources include: cloud:precise-folsom,
+      cloud:precise-folsom/updates, cloud:precise-folsom/staging,
+      cloud:precise-folsom/proposed.
+
+      Note that updating this setting to a source that is known to
+      provide a later version of OpenStack will trigger a software
+      upgrade.
+  nova-config:
+    default: /etc/nova/nova.conf
+    type: string
+    description: Full path to nova.conf
+  rabbit-user:
+    default: nova
+    type: string
+    description: Username used to access rabbitmq queue
+  rabbit-vhost:
+    default: openstack
+    type: string
+    decsription: Rabbitmq vhost
+  database-user:
+    default: nova
+    type: string
+    description: Username for database access
+  database:
+    default: nova
+    type: string
+    description: Database name
+  neutron-database-user:
+    default: neutron
+    type: string
+    description: Username for Neutron database access (if enabled)
+  neutron-database:
+    default: neutron
+    type: string
+    description: Database name for Neutron (if enabled)
+  virt-type:
+    default: kvm
+    type: string
+    description: "Virtualization flavor. Supported: kvm, xen, uml, lxc. qemu"
+  multi-host:
+    default: "yes"
+    type: string
+    description: Whether to run nova-api and nova-network on the compute nodes.
+  enable-live-migration:
+    default: False
+    type: boolean
+    description: Configure libvirt for live migration.
+  migration-auth-type:
+    default: sasl
+    type: string
+    description: |
+      TCP authentication scheme for libvirt live migration.  Available options
+      include sasl or none.
+  # needed if using flatmanager
+  bridge-interface:
+    default: br100
+    type: string
+    description: Bridge interface to be configured
+  bridge-ip:
+    default: 11.0.0.1
+    type: string
+    description: IP to be assigned to bridge interface
+  bridge-netmask:
+    default: 255.255.255.0
+    type: string
+    description: Netmask to be assigned to bridge interface
+  # needed if using flatdhcpmanager
+  flat-interface:
+    default: eth1
+    type: string
+    description: Network interface on which to build bridge
+  config-flags:
+    type: string
+    description: Comma separated list of key=value config flags to be set in nova.conf.
+  nagios_context:
+    default: "juju"
+    type: string
+    description: |
+      Used by the nrpe-external-master subordinate charm.
+      A string that will be prepended to instance name to set the host name
+      in nagios. So for instance the hostname would be something like:
+          juju-myservice-0
+      If you're running multiple environments with the same services in them
+      this allows you to differentiate between them.
+  plugin:
+    default: ovs
+    type: string
+    description: |
+      Network configuration plugin to use for quantum.
+      Supported values include:
+      .
+        ovs - OpenVSwitch
+        nvp - Nicira NVP
+        n1kv - Cisco N1kv
+  n1kv-source:
+    type: string
+    default: distro
+    description: |
+      Optional configuration to support use of additional sources such as:
+      .
+        - ppa:myteam/ppa
+        - deb http://my.archive.com/ubuntu main|KEYID
+      .
+      Note that this is used only for Cisco n1kv plugin.
