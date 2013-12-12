@@ -120,13 +120,6 @@ def db_joined(rid=None):
                      neutron_database=config('neutron-database'),
                      neutron_username=config('neutron-database-user'),
                      neutron_hostname=unit_get('private-address'))
-    if (network_manager() in ['quantum', 'neutron']
-            and neutron_plugin() == 'n1kv'):
-        # XXX: Renaming relations from quantum_* to neutron_* here.
-        relation_set(relation_id=rid,
-                     neutron_database=config('neutron-database'),
-                     neutron_username=config('neutron-database-user'),
-                     neutron_hostname=unit_get('private-address'))
 
 @hooks.hook('shared-db-relation-changed')
 @restart_on_change(restart_map())
@@ -138,8 +131,6 @@ def db_changed():
     nm = network_manager()
     plugin = neutron_plugin()
     if nm in ['quantum', 'neutron'] and plugin == 'ovs':
-        CONFIGS.write(neutron_plugin_attribute(plugin, 'config', nm))
-    if nm in ['quantum', 'neutron'] and plugin == 'n1kv':
         CONFIGS.write(neutron_plugin_attribute(plugin, 'config', nm))
 
 @hooks.hook('image-service-relation-changed')
