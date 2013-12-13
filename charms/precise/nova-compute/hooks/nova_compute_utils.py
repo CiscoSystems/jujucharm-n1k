@@ -395,7 +395,3 @@ def create_libvirt_secret(secret_file, secret_uuid, key):
            '--base64', key]
     check_call(cmd)
 
-def n1kv_add_repo():
-    src = config('n1kv-source')
-    if src.startswith('ppa:') or src.startswith('deb'):
-        configure_installation_source(src)

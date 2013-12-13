@@ -91,23 +91,3 @@ options:
           juju-myservice-0
       If you're running multiple environments with the same services in them
       this allows you to differentiate between them.
-  plugin:
-    default: ovs
-    type: string
-    description: |
-      Network configuration plugin to use for quantum.
-      Supported values include:
-      .
-        ovs - OpenVSwitch
-        nvp - Nicira NVP
-        n1kv - Cisco N1kv
-  n1kv-source:
-    type: string
-    default: distro
-    description: |
-      Optional configuration to support use of additional sources such as:
-      .
-        - ppa:myteam/ppa
-        - deb http://my.archive.com/ubuntu main|KEYID
-      .
-      Note that this is used only for Cisco n1kv plugin.
