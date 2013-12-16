@@ -1,0 +1,43 @@
+options:
+  source:
+    type: string
+    default: cloud:precise-updates/folsom
+    description: |
+      Optional configuration to support use of additional sources such as:
+      .
+        - ppa:myteam/ppa
+        - cloud:precise-proposed/folsom
+        - http://my.archive.com/ubuntu main
+      .
+      The last option should be used in conjunction with the key configuration
+      option.
+      .
+      Note that a minimum ceph version of 0.48.2 is required for use with this
+      charm which is NOT provided by the packages in the main Ubuntu archive
+      for precise.
+  key:
+    type: string
+    description: |
+      Key ID to import to the apt keyring to support use with arbitary source
+      configuration from outside of Launchpad archives or PPA's.
+  # Keystone integration
+  operator-roles:
+    default: "Member,Admin"
+    type: string
+    description: |
+      Comma-separated list of Swift operator roles; used when integrating with
+      OpenStack Keystone.
+  region:
+    default: RegionOne
+    type: string
+    description: |
+      OpenStack region that the RADOS gateway supports; used when integrating with
+      OpenStack Keystone.
+  cache-size:
+    default: 500
+    type: int
+    description: Number of keystone tokens to hold in local cache.
+  revocation-check-interval:
+    default: 600
+    type: int
+    description: Interval between revocation checks to keystone.

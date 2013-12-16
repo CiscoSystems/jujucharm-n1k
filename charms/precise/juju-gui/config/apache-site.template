@@ -1,0 +1,33 @@
+<VirtualHost *:{{port}}>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot {{server_root}}
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory {{server_root}}>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    {{if tests_root}}
+        Alias /test {{tests_root}}
+    {{endif}}
+
+    FallbackResource /index.html
+
+    Header unset Cache-Control
+    Header set Cache-Control "max-age=0, public, must-revalidate"
+
+</VirtualHost>

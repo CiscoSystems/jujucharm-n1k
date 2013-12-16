@@ -1,0 +1,210 @@
+# This file is part of the Juju GUI, which lets users view and manage Juju
+# environments within a graphical interface (https://launchpad.net/juju-gui).
+# Copyright (C) 2012-2013 Canonical Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License version 3, as published by
+# the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+# SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+options:
+  juju-gui-source:
+    description: |
+      Where to install Juju GUI from. Possible values the following.
+      - 'local' (default): The latest local release will be deployed. Releases
+        are stored in the releases directory of this charm.
+      - 'stable': The latest release from the "stable" series will be deployed.
+      - 'trunk': The latest release from the "trunk" series will be deployed.
+        Please note that this is not a build of the current Juju GUI trunk.
+        For that functionality, use "lp:juju-gui", as described below.
+      - a stable version (e.g '0.1.0'): The specified stable version will be
+        deployed. A suitable release is looked up in the local releases
+        repository (see the "local" choice above). If not found locally, the
+        release will be downloaded from Launchpad.
+      - a trunk version (e.g '0.1.0+build.1'): The specified trunk version
+        will be deployed. A suitable release is looked up in the local releases
+        repository (see the "local" choice above). If not found locally, the
+        release will be downloaded from Launchpad.
+      - a Bazaar branch (e.g. 'lp:juju-gui'): A release will be created and
+        deployed from the specified Bazaar branch. "http://"" prefixed branches
+        work as well. It is also possible to include the specific branch
+        revision, e.g. "lp:juju-gui:42" will checkout revno 42.
+      - a "url:"" prefixed url: The release found at the given URL
+        (ex: url:http://... or url:file://...) will be deployed.
+    type: string
+    default: local
+  juju-gui-debug:
+    description: |
+      Run Juju GUI in debug mode, serving the uncompressed GUI source files.
+    type: boolean
+    default: false
+  juju-api-branch:
+    description: |
+      The Juju API Bazaar branch (implementing the WebSocket server).  Since
+      juju-core includes the WebSocket API server out of the box, this option
+      is ignored if the charm is deployed using juju-core.
+    type: string
+    default: lp:~hazmat/juju/rapi-rollup
+  staging:
+    description: |
+      Connect the Juju GUI to the staging backend (i.e. a simulated Juju
+      environment).  Currently juju-core does not support the staging backend.
+      For this reason, an error is raised if this option is enabled in a
+      juju-core environment.
+    type: boolean
+    default: false
+  staging-environment:
+    description: |
+      The environment JSON export used by the staging server. This option can
+      be used to change the topology of the simulated Juju environment.
+      Possible values are 'sample' and 'large'.  Currently juju-core does not
+      support the staging backend. For this reason, this option is ignored if
+      the charm is deployed using juju-core.
+    type: string
+    default: sample
+  juju-gui-console-enabled:
+    description: |
+      Whether or not the console should be enabled for the browser.
+    type: boolean
+    default: false
+  command-log-file:
+    description: |
+      The log file where stdout and stderr should be sent for all commands
+      that are run by charm hooks.
+    type: string
+    default: /var/log/juju/juju-gui.log
+  ssl-cert-path:
+    description: |
+      The path to the directory where the SSL certificates are stored.
+    type: string
+    default: /etc/ssl/juju-gui
+  ssl-cert-contents:
+    description: |
+      The contents of the certificate file to be used in SSL connections to
+      the GUI. Both ssl-cert-contents and ssl-key-contents must be provided.
+      If not, cetificates will be automatically generated.
+    type: string
+  ssl-key-contents:
+    description: |
+      The contents of the private key file to be used in SSL connections to
+      the GUI. Both ssl-cert-contents and ssl-key-contents must be provided.
+      If not, cetificates will be automatically generated.
+    type: string
+  login-help:
+    description: |
+      The help text shown to the user on the login screen.
+    type: string
+    default: |
+      The password is the admin-secret from the Juju environment.  This can
+      often be found by looking in ~/.juju/environments.yaml.
+  read-only:
+    description: |
+      Whether or not the GUI is in read-only mode. Note that read-only mode is
+      advisory, and enforced only in the client. If someone can access the
+      websocket and has the password, they can send commands over the
+      websocket to mutate the environment.
+    type: boolean
+    default: false
+  serve-tests:
+    description: |
+      Whether or not the GUI unit tests are exposed. If this option is
+      enabled, unit tests can be run in the browser by visiting the URL
+      "https://[Juju GUI address]/test/".
+    type: boolean
+    default: false
+  secure:
+    description: |
+      Set to false to serve the GUI over an insecure HTTP connection.
+      Do not set unless you understand and accept the risks.
+    type: boolean
+    default: true
+  password:
+    description: |
+      If given, the password to use for the environment to immediately
+      connect.  Do not set unless you understand and accept the risks.
+    type: string
+  sandbox:
+    description: |
+      Run using an in-memory sandbox rather than a real (or even improv) Juju
+      backend.  Sandbox is a client side construct running entirely in the
+      client. Sandbox does not currently support imported environment
+      simulation and is exclusive to the staging: true configuration. If
+      staging is true it will be used in preference to sandbox at this time.
+    type: boolean
+    default: false
+  charmworld-url:
+    description: |
+      The URL of the charm catalog site ("charmworld") from which charm
+      catalog data will be drawn.
+    type: string
+    default: https://manage.jujucharms.com/
+  repository-location:
+    description: |
+      The charm depends on several software packages that are not packaged in
+      Ubuntu.  In order to ensure that only versions known to work with our
+      charm are used, there is a single PPA where all packages are kept.  The
+      juju-gui-charmers team supports 'stable' and 'devel' versions.  Only
+      stable should be used for production.  For enterprise deployments that
+      do not allow access to resources outside of their control, the location
+      can be any specification as long as it is recognizable by
+      'add-apt-repository'.
+    type: string
+    default: ppa:juju-gui-charmers/stable
+  ga-key:
+    description: |
+      The Google Analytics key to use.  Set to blank to disable analytics.
+      The team developing the Juju GUI benefits from understanding how
+      different deployments use the tool.  By keeping the default key value,
+      anonymized usage data is reported back using Google Analytics.  The type
+      of data collected includes the charms that are deployed and the number
+      of units per service.  Use of analytics is optional but we hope you will
+      allow us to improve our tool based on your experience.
+    type: string
+    default: UA-41463568-2
+  default-viewmode:
+    description: |
+      What the default viewmode  for the charmbrowser should be. Possible options are:
+      - 'sidebar' (default): the charmwbrowser will appear as a sidebar. This
+        is also known as build mode.
+      - 'fullscreen': the charmbrowser will appear in full screen, hiding the
+        canvas. This is also known as browse mode.
+      - 'minimized': the charmbrowser will be minimized by default, and hidden.
+    type: string
+    default: sidebar
+  show-get-juju-button:
+    description: |
+      There are deployment modes for Juju GUI which are not intended as regular
+      use mode. In these cases, login/logout are disabled and instead there is
+      a link to juju.ubuntu.com
+    type: boolean
+    default: false
+  builtin-server:
+    description: |
+      Enable the built-in server, disabling both haproxy and Apache.
+      This is a temporary option: the built-in server will be
+      the only server in the future.
+    type: boolean
+    default: true
+  builtin-server-logging:
+    description: |
+      Set the GUI server log level. Possible values are debug, info, warning
+      and error. The log file is placed in /var/log/upstart/guiserver.log.
+    type: string
+    default: info
+  nagios_context:
+    description: |
+      Used by the nrpe-external-master subordinate charm.
+      A string that will be prepended to instance name to set the host name
+      in nagios. So for instance the hostname would be something like:
+          juju-myservice-0
+      If you are running multiple environments with the same services in them
+      this allows you to differentiate between them.
+    type: string
+    default: "juju"

@@ -1,0 +1,4 @@
+RADOS Gateway Charm
+-------------------
+
+ * Improved process control of radosgw daemon (to many restarts)

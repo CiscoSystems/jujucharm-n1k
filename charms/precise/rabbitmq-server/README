@@ -1,0 +1,17 @@
+Configuring SSL
+---------------
+Generate an unencrypted RSA private key for the servers and a certificate:
+
+  openssl genrsa -out rabbit-server-privkey.pem 2048
+
+Get an X.509 certificate. This can be self-signed, for example:
+
+  openssl req -batch -new -x509 -key rabbit-server-privkey.pem -out rabbit-server-cert.pem -days 10000
+
+Deploy the service:
+
+  juju deploy rabbitmq-server rabbit
+
+Enable SSL, passing in the key and certificate as configuration settings:
+
+  juju set rabbit ssl_enabled=True ssl_key="`cat rabbit-server-privkey.pem`" ssl_cert="`cat rabbit-server-cert.pem`"

@@ -1,0 +1,66 @@
+options:
+  ssl_enabled:
+    type: boolean
+    default: False
+    description: enable SSL
+  management_plugin:
+    type: boolean
+    default: False
+    description: enable the management plugin
+  ssl_port:
+    type: int
+    default: 5671
+    description: SSL port
+  ssl_key:
+    type: string
+    description: private unencrypted key in PEM format (starts "-----BEGIN RSA PRIVATE KEY-----")
+  ssl_cert:
+    type: string
+    description: X.509 certificate in PEM format (starts "-----BEGIN CERTIFICATE-----")
+  nagios_context:
+    default: "juju"
+    type: string
+    description: |
+      Used by the nrpe-external-master subordinate charm.
+      A string that will be prepended to instance name to set the host name
+      in nagios. So for instance the hostname would be something like:
+          juju-myservice-0
+      If you're running multiple environments with the same services in them
+      this allows you to differentiate between them.
+  # HA configuration settings
+  vip:
+      type: string
+      description: "Virtual IP to use to front rabbitmq in ha configuration"
+  vip_iface:
+      type: string
+      default: eth0
+      description: "Network Interface where to place the Virtual IP"
+  vip_cidr:
+      type: int
+      default: 24
+      description: "Netmask that will be used for the Virtual IP"
+  ha-bindiface:
+      type: string
+      default: eth0
+      description: |
+        Default network interface on which HA cluster will bind to communication
+        with the other members of the HA Cluster.
+  ha-mcastport:
+      type: int
+      default: 5406
+      description: |
+        Default multicast port number that will be used to communicate between
+        HA Cluster nodes.
+  rbd-size:
+      type: string
+      default: 5G
+      description: |
+        Default rbd storage size to create when setting up block storage.
+        This value should be specified in GB (e.g. 100G).
+  rbd-name:
+      type: string
+      default: rabbitmq1
+      description: |
+        The name that will be used to create the Ceph's RBD image with. If the
+        image name exists in Ceph, it will be re-used and the data will be
+        overwritten.
