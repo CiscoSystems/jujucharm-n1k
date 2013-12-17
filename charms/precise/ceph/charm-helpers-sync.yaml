@@ -1,0 +1,9 @@
+branch: lp:charm-helpers
+destination: hooks/charmhelpers
+include:
+    - core
+    - fetch
+    - contrib.storage.linux:
+        - utils
+    - payload.execd
+    - contrib.openstack.alternatives
