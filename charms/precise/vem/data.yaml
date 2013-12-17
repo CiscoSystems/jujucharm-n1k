@@ -1,2 +1,8 @@
 n1kv_conf:
-   vsm_ip: 20.20.20.20
+   vsm_ip:
+   vsm_domain_id:
+   host_mgmt_intf:
+   uplink_profile:
+   vtep_config:
+   node_type:
+
