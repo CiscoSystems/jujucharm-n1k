@@ -1,4 +1,12 @@
 options:
+  vsm_ip:
+    type: string
+    default: "20.1.1.101"
+    description: "Management ip of VSM"
+  vsm_domain_id:
+    type: int
+    default: 101
+    description: "Domain id this vsm will be controlling"
   host_mgmt_intf:
     type: string
     default: "eth0"
@@ -7,14 +15,14 @@ options:
     type: string
     default: "phys eth1 profile sys-uplink"
     description: "Port-Profile mapping for all UVEM managed Interfaces"
-  vtep_name:
+  vtep_config:
     type: string
     default: ""
-    description: "Host VTEP name for the host on a VXGW setup"
-  vtep_port_profile:
+    description: "VTEP config. Syntax: virt <port-name> profile <profile-name> [mode static|dhcp] [address <ipaddr>]"
+  node_type:
     type: string
-    default: ""
-    description: "Port-Profile with vxlan capability"
+    default: "compute"
+    description: "Function of this node in Cisco Openstack network"
   mapping:
     type: string
     default: ""

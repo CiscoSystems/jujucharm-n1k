@@ -23,17 +23,18 @@ vtep_name = None
 with open('data.yaml', 'r') as f:
    temp=f.read()
    n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
+   n1kv_conf_data["n1kv_conf"]["vsm_ip"]=host_conf['vsm_ip'] 
+   n1kv_conf_data["n1kv_conf"]["vsm_domain_id"]=host_conf['vsm_domain_id']
    n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"]=host_conf['host_mgmt_intf']
    n1kv_conf_data["n1kv_conf"]["uplink_profile"]=host_conf['uplink_profile']
-   if 'vtep_name' in host_conf:
-      vtep_name=host_conf['vtep_name']
-   if 'vtep_port_profile' in host_conf:
-      vtep_port_profile=host_conf['vtep_port_profile']
+   n1kv_conf_data["n1kv_conf"]["node_type"]=host_conf['node_type']
+   if 'vtep_config' in host_conf:
+      n1kv_conf_data["n1kv_conf"]["vtep_config"]=host_conf['vtep_config']
 with open('data.yaml', 'w') as f:
    f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
 
 common.update_n1kv_config()
 
-if vtep_name:
-   create_vtep(vtep_name, vtep_port_profile)
+#if vtep_name:
+#   create_vtep(vtep_name, vtep_port_profile)
 

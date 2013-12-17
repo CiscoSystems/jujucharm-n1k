@@ -1,3 +1,2 @@
-{!!python/unicode 'n1kv_conf': {!!python/unicode 'host_mgmt_intf': !!python/unicode 'eth50',
-    !!python/unicode 'uplink_profile': !!python/unicode 'phys eth1 profile sys-uplink',
-    !!python/unicode 'vsm_domain_id': !!python/unicode '1', !!python/unicode 'vsm_ip': !!python/unicode '0.0.0.0'}}
+n1kv_conf:
+   vsm_ip: 20.20.20.20

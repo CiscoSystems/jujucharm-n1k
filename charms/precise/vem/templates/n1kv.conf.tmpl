@@ -67,11 +67,17 @@ ${uplink_profile}
 #virt vmknic-int1 profile profint mode dhcp mac 00:11:22:33:44:55
 #virt vmknic-int2 profile profint mode static address 192.168.2.91 netmask 255.255.255.0 mac 00:22:22:33:44:55
 #virt vmknic-int3 profile profint
-
+${vtep_config}
 #ImpNote:
 #When migrating Mgmt pnic to uVEM, make sure you specify 
 #a)pnic-profile mapping
 #b)Create a new internal virtual port by specifying veth.Specify profile and 'ip/mac' details if needed. 
+
+# node-type <network/compute>
+# Description: Function of this node in Cisco Openstack network.
+# Optional: YES.
+# Default: compute
+${node_type}
 
 # <host-uuid>
 # Description: Host UUID

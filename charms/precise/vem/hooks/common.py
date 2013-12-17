@@ -140,20 +140,23 @@ def relation_get(scope=None, unit_name=None, relation_id=None):
 def get_host_specific_config(hostname):
      mapping=yaml.load(config_get('mapping'), Loader=yaml.loader.BaseLoader)
      print mapping
+     map_conf = dict()
      if mapping is not None:
         for k, v in mapping.iteritems():
             if k in [hostname]:
                print("APPLY HOST SPEC CONF")
                juju_log("Config for %s to be applied" % hostname)
-               return v
-        print("HOST SPEC CONF NOT FOUND. APPLY GENERAL CONF")
+               map_conf = v
      juju_log("Applying general config")
-     default_conf = dict()
-     default_conf['host_mgmt_intf']=config_get('host_mgmt_intf')
-     default_conf['uplink_profile']=config_get('uplink_profile')
-     default_conf['vtep_name']=config_get('vtep_port_profile')
-     default_conf['vtep_port_profile']=config_get('vtep_port_profile')
-     return default_conf
+     host_conf = { 
+       'vsm_ip': map_conf['vsm_ip'] if 'vsm_ip' in map_conf else config_get('vsm_ip'),
+        'vsm_domain_id': map_conf['vsm_ip'] if 'vsm_ip' in map_conf else config_get('vsm_domain_id'),
+        'host_mgmt_intf': map_conf['host_mgmt_intf'] if 'host_mgmt_intf' in map_conf else config_get('host_mgmt_intf'),
+        'uplink_profile': map_conf['uplink_profile'] if 'uplink_profile' in map_conf else config_get('uplink_profile'),
+        'vtep_config': map_conf['vtep_config'] if 'vtep_config' in map_conf else config_get('vtep_config'),
+        'node_type': map_conf['node_type'] if 'node_type' in map_conf else config_get('node_type'),
+     }
+     return host_conf
 
 
 
@@ -169,15 +172,18 @@ def update_n1kv_config():
    n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
    t2 = Template( file = 'templates/n1kv.conf.tmpl', 
         searchList = [{ 'host_mgmt_intf':n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"],
-                        'uplink_profile':n1kv_conf_data["n1kv_conf"]["uplink_profile"],
+                        'uplink_profile':n1kv_conf_data["n1kv_conf"]["uplink_profile"].replace(', ', '\n').replace(',','\n'),
                         'vsm_ip':n1kv_conf_data["n1kv_conf"]["vsm_ip"],
-                        'vsm_domain_id':n1kv_conf_data["n1kv_conf"]["vsm_domain_id"]   
+                        'vsm_domain_id':n1kv_conf_data["n1kv_conf"]["vsm_domain_id"],   
+                        'node_type':n1kv_conf_data["n1kv_conf"]["node_type"],   
+                        'vtep_config':n1kv_conf_data["n1kv_conf"]["vtep_config"].replace(', ', '\n').replace(',','\n')   
                       }])
    juju_log(str(t2))
    outfile = file('/etc/n1kv/n1kv.conf', 'w')
    outfile.write(str(t2))
    outfile.close()
-   subprocess.call(["service", "n1kv", "restart"])
+   #subprocess.call(["service", "n1kv", "restart"])
+   subprocess.call(["vemcmd", "reread", "config"])
   
 #vemcmd reread config # re-reads the /etc/n1kv/n1kv.conf
 
