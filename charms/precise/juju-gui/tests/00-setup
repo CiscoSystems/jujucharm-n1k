@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# This file is part of the Juju GUI, which lets users view and manage Juju
+# environments within a graphical interface (https://launchpad.net/juju-gui).
+# Copyright (C) 2012-2013 Canonical Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License version 3, as published by
+# the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+# SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+TESTDIR=`dirname $0`
+DOWNLOADCACHE="$TESTDIR/download-cache"
+VENV="$TESTDIR/.venv"
+ACTIVATE="$VENV/bin/activate"
+TEST_REQUIREMENTS="test-requirements.pip"
+SERVER_REQUIREMENTS="server-requirements.pip"
+
+
+createvenv() {
+    # Create a virtualenv if it does not exist, or it is older than requirements.
+    retcode=0
+    updated_downloadcache=0
+    if [ ! -d "$DOWNLOADCACHE" ]; then
+        bzr co --lightweight lp:~juju-gui-charmers/juju-gui/charm-download-cache $DOWNLOADCACHE
+        updated_downloadcache=1
+    fi
+    if [ ! -f "$ACTIVATE" -o "$TEST_REQUIREMENTS" -nt "$ACTIVATE" -o "$SERVER_REQUIREMENTS" -nt "$ACTIVATE" ]; then
+        [ $updated_downloadcache -eq 0 ] && bzr up $DOWNLOADCACHE
+        virtualenv --distribute --extra-search-dir=$DOWNLOADCACHE $VENV
+        . $ACTIVATE && \
+            yes w | env BZR_PLUGIN_PATH='-user' \
+            pip install -r $TEST_REQUIREMENTS --find-links deps --find-links $DOWNLOADCACHE --no-allow-external --no-index
+        retcode=$?
+        [ $retcode -eq 0 ] && touch $ACTIVATE || touch $TEST_REQUIREMENTS
+    fi
+    return $retcode
+}
+
+
+createvenv

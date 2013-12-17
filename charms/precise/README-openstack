@@ -1,0 +1,7 @@
+1. add below lines to /etc/squid-deb-proxy/mirror-dstdomain.acl.d/99-maas and execute service squid-deb-proxy restart
+ppa.launchpad.net
+private-ppa.launchpad.net
+
+2. In the openstack.yaml provide the n1kv-source. 
+
+3. Execute ./openstack-setup-distro.sh

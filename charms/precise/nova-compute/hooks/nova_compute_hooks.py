@@ -41,7 +41,6 @@ from nova_compute_utils import (
     initialize_ssh_keys,
     migration_enabled,
     network_manager,
-    n1kv_add_repo,
     neutron_plugin,
     do_openstack_upgrade,
     public_ssh_key,
@@ -61,8 +60,6 @@ CONFIGS = register_configs()
 @hooks.hook()
 def install():
     execd_preinstall()
-    if config('plugin') == 'n1kv':
-        n1kv_add_repo()
     configure_installation_source(config('openstack-origin'))
     apt_update()
     apt_install(determine_packages(), fatal=True)
@@ -101,10 +98,6 @@ def amqp_changed():
     if network_manager() == 'quantum' and neutron_plugin() == 'ovs':
         CONFIGS.write(QUANTUM_CONF)
     if network_manager() == 'neutron' and neutron_plugin() == 'ovs':
-        CONFIGS.write(NEUTRON_CONF)
-    if network_manager() == 'quantum' and neutron_plugin() == 'n1kv':
-        CONFIGS.write(QUANTUM_CONF)
-    if network_manager() == 'neutron' and neutron_plugin() == 'n1kv':
         CONFIGS.write(NEUTRON_CONF)
 
 @hooks.hook('shared-db-relation-joined')
@@ -165,12 +158,6 @@ def compute_changed():
     import_keystone_ca_cert()
     if (network_manager() in ['quantum', 'neutron']
             and neutron_plugin() == 'ovs'):
-        # in case we already have a database relation, need to request
-        # access to the additional neutron database.
-        [db_joined(rid) for rid in relation_ids('shared-db')]
-    if (network_manager() in ['quantum', 'neutron']
-            and neutron_plugin() == 'n1kv'):
-        log('cloud-compute-relation-changed plugin n1kv')
         # in case we already have a database relation, need to request
         # access to the additional neutron database.
         [db_joined(rid) for rid in relation_ids('shared-db')]

@@ -412,24 +412,6 @@ class NeutronContext(object):
 
         return nvp_ctxt
 
-    def n1kv_ctxt(self):
-        driver = neutron_plugin_attribute(self.plugin, 'driver',
-                                          self.network_manager)
-        n1kv_config = neutron_plugin_attribute(self.plugin, 'config',
-                                          self.network_manager)
-        n1kv_ctxt = {
-            'core_plugin': driver,
-            'neutron_plugin': 'n1kv',
-            'neutron_security_groups': self.neutron_security_groups,
-            'local_ip': unit_private_ip(),
-            'config': n1kv_config,
-            'vsm_ip': config('n1kv-vsm-ip'),
-            'vsm_username': config('n1kv-vsm-username'),
-            'vsm_password': config('n1kv-vsm-password'),
-        }
-
-        return n1kv_ctxt
-
     def __call__(self):
         self._ensure_packages()
 
@@ -445,8 +427,6 @@ class NeutronContext(object):
             ctxt.update(self.ovs_ctxt())
         elif self.plugin == 'nvp':
             ctxt.update(self.nvp_ctxt())
-        elif self.plugin == 'n1kv':
-            ctxt.update(self.n1kv_ctxt())
 
         self._save_flag_file()
         return ctxt

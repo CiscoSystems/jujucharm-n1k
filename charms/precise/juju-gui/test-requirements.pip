@@ -1,0 +1,66 @@
+# Juju GUI test requirements.
+
+# This file is part of the Juju GUI, which lets users view and manage Juju
+# environments within a graphical interface (https://launchpad.net/juju-gui).
+# Copyright (C) 2012-2013 Canonical Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License version 3, as published by
+# the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+# SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Note: the order of the following dependencies is important!
+
+# GUI server -> juju deployer -> bzr.
+chardet==2.1.1
+python-debian==0.1.21
+
+# GUI server -> juju deployer.
+bzr==2.6.0
+
+# Charm hooks + GUI server.
+PyYAML==3.10
+
+# GUI server.
+-r server-requirements.pip
+
+# Charm hooks.
+launchpadlib==1.10.2
+python-apt==0.8.5
+Tempita==0.5.1
+
+# Charm tests + GUI server tests.
+# Note that websocket-client, required by charm integration tests,
+# is already installed by server-requirements.
+flake8==2.0
+mock==1.0.1
+
+# Charm tests.
+selenium==2.34.0
+xvfbwrapper==0.2.2
+
+
+## The following requirements were added by pip --freeze:
+argparse==1.2.1
+httplib2==0.8
+keyring==3.2.1
+lazr.authentication==0.1.2
+lazr.restfulclient==0.13.3
+lazr.uri==1.0.3
+mccabe==0.2.1
+oauth==1.0.1
+pep8==1.4.6
+pyflakes==0.7.3
+simplejson==3.3.1
+testresources==0.2.7
+wadllib==1.3.2
+wsgi-intercept==0.6.0
+wsgiref==0.1.2
+zope.interface==4.0.5

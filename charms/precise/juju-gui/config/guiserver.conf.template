@@ -1,0 +1,22 @@
+description "GUIServer"
+author "Canonical"
+
+start on (filesystem and net-device-up IFACE=lo)
+stop on runlevel [!2345]
+
+exec /usr/bin/python /usr/local/bin/runserver.py \
+    --logging="{{builtin_server_logging}}" \
+    --guiroot="{{gui_root}}" \
+    --sslpath="{{ssl_cert_path}}" \
+    --charmworldurl="{{charmworld_url}}" \
+    {{if sandbox}}
+        --sandbox \
+    {{else}}
+        --apiurl="{{api_url}}" --apiversion="{{api_version}}" \
+    {{endif}}
+    {{if serve_tests}}
+        --testsroot="{{tests_root}}" \
+    {{endif}}
+    {{if insecure}}
+        --insecure
+    {{endif}}
