@@ -1,41 +1,57 @@
-Describe the intended usage of this charm and anything unique about how
-this charm relates to others here. 
-
-This README will be displayed in the Charm Store, it should be either Markdown or RST. Ideal READMEs include instructions on how to use the charm, expected usage, and charm features that your audience might be interested in. For an example of a well written README check out Hadoop: http://jujucharms.com/charms/precise/hadoop
-
-Here's an example you might wish to template off of:
-
 Overview
 --------
+VEM charm installs the Nexus 1000v virtual switch onto the 
+compute/network nodes.
 
-This charm provides (service) from (service homepage). Add a description here of what the service itself actually does. 
+VEM charm is designed as a subordinate charm. The aim is to
+have this charm installed on the nova-compute and the 
+quantum-gateway hosts.
 
 
 Usage
 -----
+In order to use Cisco Openstack solution we would need to 
+install VEM on the nova-compute and quantum-gateway hosts. 
+We need to have nova-compute deployed first and we would
+have vem charm as subordinate it.
 
-Step by step instructions on using the charm:
+In the config.yaml you can provide general config that will
+be common to all VEM hosts in environement. If you need to 
+configure host-specific config to each host depending on its fqdn,
+a mapping file can be provided as a string to the variable called
+mapping.
 
-    juju deploy servicename
+juju deploy nova-compute
+juju deploy --config=config.yaml vem
+juju add-relation nova-compute vem
+juju set vem mapping="$(cat mapping.yaml)"
 
-and so on. If you're providing a web service or something that the end user needs to go to, tell them here, especially if you're deploying a service that might listen to a non-default port. 
+Here is a sample of the mapping file:
+maas-node-1:
+  host_mgmt_intf: eth1
+  uplink_profile: phys eth1 profile sys-uplink
+  node-type: compute
+maas-node-3:
+  host_mgmt_intf: eth0
+  uplink_profile: phys eth0 profile sys-uplink 
+  node-type: network
+  vtep_config: 'virt vmknic-int1 profile profint mode dhcp mac 00:21:32:43:54:76'
+  
+In this way, the hosts in the mapping mentioned in the mapping file will
+get these specific config which will overwrite the generate config provided
+in the config.yaml
 
-You can then browse to http://ip-address to configure the service. 
+In this release, the VEM charm wont support add-relation with the VSM charm.
 
 Configuration
 -------------
-
-The configuration options will be listed on the charm store, however If you're making assumptions or opinionated decisions in the charm (like setting a default administrator password), you should detail that here so the user knows how to change it immediately, etc.
 
 
 Contact Information
 -------------------
 
-Though this will be listed in the charm store itself don't assume a user will know that, so include that information here:
-
 Author:
 Report bugs at: http://bugs.launchpad.net/charms/+source/charmname
 Location: http://jujucharms.com/charms/distro/charmname
 
-* Be sure to remove the templated parts before submitting to https://launchpad.net/charms for inclusion in the charm store.
 
