@@ -29,7 +29,8 @@ from horizon_utils import (
     restart_map,
     LOCAL_SETTINGS, HAPROXY_CONF,
     enable_ssl,
-    do_openstack_upgrade
+    do_openstack_upgrade,
+    get_cisco_repository
 )
 from charmhelpers.contrib.hahelpers.apache import install_ca_cert
 from charmhelpers.contrib.hahelpers.cluster import get_hacluster_config
@@ -42,6 +43,8 @@ CONFIGS = register_configs()
 @hooks.hook('install')
 def install():
     configure_installation_source(config('openstack-origin'))
+    if config('profile-support') == 'cisco':
+        get_cisco_repository()
     apt_update(fatal=True)
     apt_install(filter_installed_packages(PACKAGES), fatal=True)
 

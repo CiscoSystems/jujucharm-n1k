@@ -81,3 +81,15 @@ options:
     secret:
         type: string
         descriptions: Secret for Horizon to use when securing internal data; set this when using multiple dashboard units.
+    profile-support:
+        type: string
+        default: "None"
+        description: Default profile for the dashboard.
+    cisco-source:
+        type: string
+        default: distro
+        description: |
+          Optional configuration used to get Cisco Nexus 1000v sources in the format:
+            - ppa:myteam/ppa
+            - deb http://my.archive.com/ubuntu main|KEYID
+

@@ -157,8 +157,9 @@ OPENSTACK_NEUTRON_NETWORK = {
     # The profile_support option is used to detect if an external router can be
     # configured via the dashboard. When using specific plugins the
     # profile_support can be turned on if needed.
-    'profile_support': None,
+    #'profile_support': None,   # Default value
     #'profile_support': 'cisco',
+    'profile_support': '{{ support_profile }}',
 }
 
 # The OPENSTACK_IMAGE_BACKEND settings can be used to customize features
