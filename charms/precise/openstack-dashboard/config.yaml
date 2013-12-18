@@ -1,0 +1,83 @@
+options:
+    openstack-origin:
+        default: distro
+        type: string
+        description: |
+          Repository from which to install.  May be one of the following:
+          distro (default), ppa:somecustom/ppa, a deb url sources entry,
+          or a supported Cloud Archive release pocket.
+
+          Supported Cloud Archive sources include: cloud:precise-folsom,
+          cloud:precise-folsom/updates, cloud:precise-folsom/staging,
+          cloud:precise-folsom/proposed.
+
+          Note that updating this setting to a source that is known to
+          provide a later version of OpenStack will trigger a software
+          upgrade.
+    webroot:
+        default: "/horizon"
+        type: string
+        description: |
+          Directory where application will be accessible, relative to
+          http://$hostname/.
+    default-role:
+        default: "Member"
+        type: string
+        description: |
+          Default role for Horizon operations that will be created in
+          Keystone upon introduction of an identity-service relation.
+    vip:
+        type: string
+        description: "Virtual IP to use to front openstack dashboard ha configuration"
+    vip_iface:
+        type: string
+        default: eth0
+        description: "Network Interface where to place the Virtual IP"
+    vip_cidr:
+        type: int
+        default: 24
+        description: "Netmask that will be used for the Virtual IP"
+    ha-bindiface:
+        type: string
+        default: eth0
+        description: |
+          Default network interface on which HA cluster will bind to communication
+          with the other members of the HA Cluster.
+    ha-mcastport:
+        type: int
+        default: 5410
+        description: |
+          Default multicast port number that will be used to communicate between
+          HA Cluster nodes.
+    # User provided SSL cert and key
+    ssl_cert:
+        type: string
+        description: |
+          Base64 encoded SSL certificate to install and use for API ports.
+          .
+             juju set swift-proxy ssl_cert="$(cat cert | base64)" \
+                                  ssl_key="$(cat key | base64)"
+          .
+          Setting this value (and ssl_key) will enable reverse proxying, point
+          Swifts's entry in the Keystone catalog to use https, and override
+          any certficiate and key issued by Keystone (if it is configured to
+          do so).
+    ssl_key:
+        type: string
+        description: |
+          Base64 encoded SSL key to use with certificate specified as ssl_cert.
+    offline-compression:
+        type: string
+        default: "yes"
+        description: Use pre-generated Less compiled JS and CSS.
+    debug:
+        type: string
+        default: "no"
+        description: Show Django debug messages.
+    ubuntu-theme:
+        type: string
+        default: "yes"
+        description: Use Ubuntu theme for the dashboard.
+    secret:
+        type: string
+        descriptions: Secret for Horizon to use when securing internal data; set this when using multiple dashboard units.
