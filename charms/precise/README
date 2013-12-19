@@ -1,0 +1,17 @@
+
+  Instructions to deploy an Openstack with Nexus1000v
+  ---------------------------------------------------
+
+1. Add the following lines to the file:
+   cat >> /etc/squid-deb-proxy/mirror-dstdomain.acl.d/99-maas 
+   ppa.launchpad.net
+   private-ppa.launchpad.net
+
+2. Restart squid-deb-proxy:
+   service squid-deb-proxy restart
+
+2. Edit the openstack.yaml file and provide the private ppa
+
+3. Execute the openstack script:
+   ./openstack-setup.sh
+
