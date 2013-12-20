@@ -1,16 +1,16 @@
 quantum-gateway:
   plugin: n1kv
   ext-port: eth1
-  n1kv-source: deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main|F5DB2BA06DB3EEB4
+  n1kv-source: << Introduce the private ppa here >>
   openstack-origin: cloud:precise-havana
 nova-cloud-controller0:
   network-manager: Neutron
   openstack-origin: cloud:precise-havana
-  n1kv-source: deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main|F5DB2BA06DB3EEB4
+  n1kv-source: << Introduce the private ppa here >>
   quantum-plugin: n1kv
-  n1kv-vsm-username: admin 
-  n1kv-vsm-password: Sfish123 
-  n1kv-vsm-ip: 172.23.181.820
+  n1kv-vsm-username: << Introduce the VSM username here >>
+  n1kv-vsm-password: << Introduce the VSM password here >>
+  n1kv-vsm-ip: << Introduce the VSM IP here >>
 ceph:
   fsid: a51ce9ea-35cd-4639-9b5e-668625d3c1d8
   monitor-secret: AQCk5+dR6NRDMRAAKUd3B8SdAD7jLJ5nbzxXXA==
@@ -22,7 +22,7 @@ cinder:
   overwrite: 'true'
 glance:
   openstack-origin: cloud:precise-havana/updates
-keystone0:
+keystone:
   admin-password: openstack
   debug: 'true'
   log-level: DEBUG
@@ -35,6 +35,8 @@ nova-compute:
   virt-type: kvm
 openstack-dashboard:
   openstack-origin: cloud:precise-havana/updates
+  cisco-source: << Introduce the private ppa here >>
+  profile-support: cisco
 swift-proxy:
   auth-type: keystone
   country: US
