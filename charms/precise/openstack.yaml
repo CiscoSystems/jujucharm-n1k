@@ -3,7 +3,7 @@ quantum-gateway:
   ext-port: eth1
   n1kv-source: << Introduce the private ppa here >>
   openstack-origin: cloud:precise-havana
-nova-cloud-controller0:
+nova-cloud-controller:
   network-manager: Neutron
   openstack-origin: cloud:precise-havana
   n1kv-source: << Introduce the private ppa here >>
