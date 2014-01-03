@@ -1,0 +1,157 @@
+options:
+  openstack-origin:
+    default: distro
+    type: string
+    description: |
+      Repository from which to install.  May be one of the following:
+      distro (default), ppa:somecustom/ppa, a deb url sources entry,
+      or a supported Cloud Archive release pocket.
+      .
+      Supported Cloud Archive sources include:
+        - cloud:precise-folsom,
+        - cloud:precise-folsom/updates
+        - cloud:precise-folsom/staging
+        - cloud:precise-folsom/proposed
+      .
+      Note that updating this setting to a source that is known to
+      provide a later version of OpenStack will trigger a software
+      upgrade.
+  region:
+    default: RegionOne
+    type: string
+    description: OpenStack region that this swift-proxy supports.
+  # Ring configuration
+  partition-power:
+    default: 8
+    type: int
+    description: Partition power.
+  replicas:
+    default: 3
+    type: int
+    description: Minimum replicas.
+  min-hours:
+    default: 1
+    type: int
+    description: Minimum hours between balances
+  zone-assignment:
+    default: "manual"
+    type: string
+    description: |
+      Which policy to use when assigning new storage nodes to zones.
+      .
+        manual - Allow swift-storage services to request zone membership.
+        auto - Assign new swift-storage units to zones automatically.
+      .
+      The configured replica minimum must be met by an equal number of storage
+      zones before the storage ring will be initially balance.  Deployment
+      requirements differ based on the zone-assignment policy configured, see
+      this charm's README for details.
+  # User provided SSL cert and key
+  ssl_cert:
+    type: string
+    description: |
+      Base64 encoded SSL certificate to install and use for API ports.
+      .
+         juju set swift-proxy ssl_cert="$(cat cert | base64)" \
+                              ssl_key="$(cat key | base64)"
+      .
+      Setting this value (and ssl_key) will enable reverse proxying, point
+      Swifts's entry in the Keystone catalog to use https, and override
+      any certficiate and key issued by Keystone (if it is configured to
+      do so).
+  ssl_key:
+    type: string
+    description: |
+      Base64 encoded SSL key to use with certificate specified as ssl_cert.
+  # Locally generated CA Cert info (only use without keystone)
+  # These options are deprecated and will be removed sometime
+  use-https:
+    default: "yes"
+    type: string
+    description: Whether to listen on HTTPS
+  country:
+    default: US
+    type: string
+    description: Country
+  state:
+    default: ST
+    type: string
+    description: State
+  locale:
+    default: City
+    type: string
+    description: Locale
+  common-name:
+    default: CN
+    type: string
+    description: Common Name
+  # General Swift Proxy configuration
+  bind-port:
+    default: 8080
+    type: int
+    description: TCP port to listen on
+  workers:
+    default: 0
+    type: int
+    description: Number of TCP workers to launch (0 for the number of system cores)
+  operator-roles:
+    default: "Member,Admin"
+    type: string
+    description: Comma-separated list of Swift operator roles.
+  auth-type:
+    default: tempauth
+    type: string
+    description: Auth method to use, tempauth or keystone
+  delay-auth-decision:
+    default: true
+    type: boolean
+    description: Delay authentication to downstream WSGI services.
+  # Manual Keystone configuration.
+  keystone-auth-host:
+    type: string
+    description: Keystone authentication host
+  keystone-auth-port:
+    default: 35357
+    type: int
+    description: Keystone authentication port
+  keystone-auth-protocol:
+    default: http
+    type: string
+    description: Keystone authentication protocol
+  keystone-admin-tenant-name:
+    default: service
+    type: string
+    description: Keystone admin tenant name
+  keystone-admin-user:
+    type: string
+    description: Keystone admin username
+  keystone-admin-password:
+    type: string
+    description: Keystone admin password
+  # HA configuration settings
+  swift-hash:
+    type: string
+    description: Hash to use across all swift-proxy servers - don't loose
+  vip:
+    type: string
+    description: "Virtual IP to use to front swift-proxy in ha configuration"
+  vip_iface:
+    type: string
+    default: eth0
+    description: "Network Interface where to place the Virtual IP"
+  vip_cidr:
+    type: int
+    default: 24
+    description: "Netmask that will be used for the Virtual IP"
+  ha-bindiface:
+    type: string
+    default: eth0
+    description: |
+      Default network interface on which HA cluster will bind to communication
+      with the other members of the HA Cluster.
+  ha-mcastport:
+    type: int
+    default: 5414
+    description: |
+      Default multicast port number that will be used to communicate between
+      HA Cluster nodes.

@@ -98,8 +98,12 @@ valid_services = {
     },
     "heat": {
         "type": "orchestration",
-        "desc": "Heat Orchestration Service"
+        "desc": "Heat Orchestration API"
     },
+    "heat-cfn": {
+        "type": "cloudformation",
+        "desc": "Heat CloudFormation API"
+    }
 }
 
 
