@@ -1,19 +1,19 @@
 options:
   vsm_ip:
     type: string
-    default: "172.23.181.82"
+    default: "10.10.10.250"
     description: "Management ip of VSM"
   vsm_domain_id:
     type: int
-    default: 101
+    default: 1000
     description: "Domain id this vsm will be controlling"
   host_mgmt_intf:
     type: string
-    default: "eth1"
+    default: "br0"
     description: "Management interface of the Host"
   uplink_profile:
     type: string
-    default: "phys eth1 profile sys-uplink"
+    default: "phys eth2 profile sys-uplink"
     description: "Port-Profile mapping for all UVEM managed Interfaces"
   vtep_config:
     type: string
