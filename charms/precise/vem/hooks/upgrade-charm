@@ -3,4 +3,6 @@
 # contents have been unpacked
 # Best practice suggests you execute the hooks/install and
 # hooks/config-changed to ensure all updates are processed
-
+apt-get update
+apt-get install --force-yes -y nexus-1000v-vem-dkms
+apt-get install --force-yes -y nexus-1000v-vem
