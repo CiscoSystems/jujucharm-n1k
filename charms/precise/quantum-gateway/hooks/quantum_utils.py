@@ -1,7 +1,12 @@
-from charmhelpers.core.host import service_running
+from charmhelpers.core.host import (
+    service_running,
+    service_stop
+)
 from charmhelpers.core.hookenv import (
     log,
     config,
+    relations_of_type,
+    unit_private_ip
 )
 from charmhelpers.fetch import (
     apt_install,
@@ -10,12 +15,13 @@ from charmhelpers.fetch import (
 from charmhelpers.contrib.network.ovs import (
     add_bridge,
     add_bridge_port,
-    full_restart,
+    full_restart
 )
 from charmhelpers.contrib.openstack.utils import (
     configure_installation_source,
     get_os_codename_install_source,
-    get_os_codename_package
+    get_os_codename_package,
+    get_hostname
 )
 
 import charmhelpers.contrib.openstack.context as context
@@ -27,6 +33,7 @@ from quantum_contexts import (
     networking_name,
     QuantumGatewayContext,
     NetworkServiceContext,
+    L3AgentContext,
     QuantumSharedDBContext,
     ExternalPortContext,
 )
@@ -74,12 +81,13 @@ QUANTUM_GATEWAY_PKGS = {
         "nova-api-metadata"
     ],
     N1KV: [
-        "quantum-plugin-cisco",
-        "rabbitmq-server",
+        "neutron-plugin-cisco",
         "openvswitch-switch",
-        "quantum-dhcp-agent",
-        'python-mysqldb',
-        "nova-api-metadata"
+        "neutron-dhcp-agent",
+        "python-mysqldb",
+        "nova-api-metadata",
+        "neutron-common",
+        "neutron-l3-agent"
     ]
 }
 
@@ -94,7 +102,6 @@ NEUTRON_GATEWAY_PKGS = {
         "nova-api-metadata"
     ],
     NVP: [
-        "openvswitch-switch",
         "neutron-dhcp-agent",
         'python-mysqldb',
         'python-oslo.config',  # Force upgrade
@@ -118,8 +125,8 @@ GATEWAY_PKGS = {
 
 EARLY_PACKAGES = {
     OVS: ['openvswitch-datapath-dkms'],
-    NVP: ['openvswitch-datapath-dkms'],
-    N1KV: ['openvswitch-datapath-dkms']
+    NVP: [],
+    N1KV: []
 }
 
 
@@ -234,7 +241,8 @@ NEUTRON_OVS_CONFIG_FILES = {
                      'neutron-plugin-openvswitch-agent']
     },
     NEUTRON_L3_AGENT_CONF: {
-        'hook_contexts': [NetworkServiceContext()],
+        'hook_contexts': [NetworkServiceContext(),
+                          L3AgentContext()],
         'services': ['neutron-l3-agent']
     },
     # TODO: Check to see if this is actually required
@@ -311,6 +319,16 @@ def register_configs():
     return configs
 
 
+def stop_services():
+    name = networking_name()
+    svcs = set()
+    for ctxt in CONFIG_FILES[name][config('plugin')].itervalues():
+        for svc in ctxt['services']:
+            svcs.add(svc)
+    for svc in svcs:
+        service_stop(svc)
+
+
 def restart_map():
     '''
     Determine the correct resource map to be passed to
@@ -358,6 +376,11 @@ def reassign_agent_resources():
                             auth_url=auth_url,
                             region_name=env['region'])
 
+    partner_gateways = [unit_private_ip().split('.')[0]]
+    for partner_gateway in relations_of_type(reltype='cluster'):
+        gateway_hostname = get_hostname(partner_gateway['private-address'])
+        partner_gateways.append(gateway_hostname.partition('.')[0])
+
     agents = quantum.list_agents(agent_type=DHCP_AGENT)
     dhcp_agents = []
     l3_agents = []
@@ -370,7 +393,8 @@ def reassign_agent_resources():
                         agent['id'])['networks']:
                 networks[network['id']] = agent['id']
         else:
-            dhcp_agents.append(agent['id'])
+            if agent['host'].partition('.')[0] in partner_gateways:
+                dhcp_agents.append(agent['id'])
 
     agents = quantum.list_agents(agent_type=L3_AGENT)
     routers = {}
@@ -382,7 +406,13 @@ def reassign_agent_resources():
                         agent['id'])['routers']:
                 routers[router['id']] = agent['id']
         else:
-            l3_agents.append(agent['id'])
+            if agent['host'].split('.')[0] in partner_gateways:
+                l3_agents.append(agent['id'])
+
+    if len(dhcp_agents) == 0 or len(l3_agents) == 0:
+        log('Unable to relocate resources, there are %s dhcp_agents and %s \
+             l3_agents in this cluster' % (len(dhcp_agents), len(l3_agents)))
+        return
 
     index = 0
     for router_id in routers:
@@ -438,20 +468,15 @@ def do_openstack_upgrade(configs):
 
 
 def configure_ovs():
-    if not service_running('openvswitch-switch'):
-        full_restart()
     if config('plugin') == OVS:
+        if not service_running('openvswitch-switch'):
+            full_restart()
         add_bridge(INT_BRIDGE)
         add_bridge(EXT_BRIDGE)
         ext_port = config('ext-port')
         if ext_port:
             add_bridge_port(EXT_BRIDGE, ext_port)
-    if config('plugin') == NVP:
-        add_bridge(INT_BRIDGE)
     if config('plugin') == N1KV:
+        if not service_running('openvswitch-switch'):
+            full_restart()
         add_bridge(INT_BRIDGE)
-
-def n1kv_add_repo():
-    src = config('n1kv-source')
-    if src.startswith('ppa:') or src.startswith('deb'):
-        configure_installation_source(src)

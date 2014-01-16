@@ -26,6 +26,23 @@ options:
         - deb http://my.archive.com/ubuntu main|KEYID
       .
       Note that quantum/neutron is only supported >= Folsom.
+  run-internal-router:
+    type: string
+    default: all
+    description: |
+      Optional configuration to support how the L3 agent option
+      handle_internal_only_routers is configured.
+      all    => Set to be true everywhere
+      none   => Set to be false everywhere
+      leader => Set to be true on one node (the leader) and false everywhere
+                else.
+      Use leader and none when configuring multiple floating pools
+  external-network-id:
+    type: string
+    description: |
+      Optional configuration to set the external-network-id. Only needed when
+      configuring multiple external networks and should be used in conjunction
+      with run-internal-router.
   rabbit-user:
     type: string
     default: neutron

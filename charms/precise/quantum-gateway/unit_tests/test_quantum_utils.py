@@ -6,11 +6,18 @@ templating.OSConfigRenderer = MagicMock()
 
 import quantum_utils
 
+
+try:
+    import neutronclient
+except ImportError:
+    neutronclient = None
+
 from test_utils import (
     CharmTestCase
 )
 
 import charmhelpers.core.hookenv as hookenv
+
 
 TO_PATCH = [
     'config',
@@ -26,7 +33,10 @@ TO_PATCH = [
     'headers_package',
     'full_restart',
     'service_running',
-    'NetworkServiceContext'
+    'NetworkServiceContext',
+    'unit_private_ip',
+    'relations_of_type',
+    'service_stop',
 ]
 
 
@@ -60,7 +70,7 @@ class TestQuantumUtils(CharmTestCase):
         self.config.return_value = 'nvp'
         self.assertEquals(
             quantum_utils.get_early_packages(),
-            ['openvswitch-datapath-dkms', 'linux-headers-2.6.18'])
+            [])
 
     @patch.object(quantum_utils, 'EARLY_PACKAGES')
     def test_get_early_packages_no_dkms(self, _early_packages):
@@ -76,6 +86,7 @@ class TestQuantumUtils(CharmTestCase):
         self.assertNotEqual(quantum_utils.get_packages(), [])
 
     def test_configure_ovs_starts_service_if_required(self):
+        self.config.return_value = 'ovs'
         self.service_running.return_value = False
         quantum_utils.configure_ovs()
         self.assertTrue(self.full_restart.called)
@@ -95,11 +106,6 @@ class TestQuantumUtils(CharmTestCase):
             call('br-ex')
         ])
         self.add_bridge_port.assert_called_with('br-ex', 'eth0')
-
-    def test_configure_ovs_nvp(self):
-        self.config.return_value = 'nvp'
-        quantum_utils.configure_ovs()
-        self.add_bridge.assert_called_with('br-int')
 
     def test_do_openstack_upgrade(self):
         self.config.side_effect = self.test_config.get
@@ -173,6 +179,32 @@ class TestQuantumUtils(CharmTestCase):
                                           ['hook_contexts']
             )
 
+    def test_stop_services_nvp(self):
+        self.config.return_value = 'nvp'
+        quantum_utils.stop_services()
+        calls = [
+            call('neutron-dhcp-agent'),
+            call('nova-api-metadata'),
+            call('neutron-metadata-agent')
+        ]
+        self.service_stop.assert_has_calls(
+            calls,
+            any_order=True,
+        )
+
+    def test_stop_services_ovs(self):
+        self.config.return_value = 'ovs'
+        quantum_utils.stop_services()
+        calls = [call('neutron-dhcp-agent'),
+                 call('neutron-plugin-openvswitch-agent'),
+                 call('nova-api-metadata'),
+                 call('neutron-l3-agent'),
+                 call('neutron-metadata-agent')]
+        self.service_stop.assert_has_calls(
+            calls,
+            any_order=True,
+        )
+
     def test_restart_map_nvp(self):
         self.config.return_value = 'nvp'
         ex_map = {
@@ -234,44 +266,103 @@ agents_all_alive = {
     'DHCP Agent': {
         'agents': [
             {'alive': True,
+             'host': 'cluster1-machine1.internal',
              'id': '3e3550f2-38cc-11e3-9617-3c970e8b1cf7'},
             {'alive': True,
+             'host': 'cluster1-machine2.internal',
              'id': '53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7'},
             {'alive': True,
-             'id': '92b8b6bc-38ce-11e3-8537-3c970e8b1cf7'}
+             'host': 'cluster2-machine1.internal',
+             'id': '92b8b6bc-38ce-11e3-8537-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine3.internal',
+             'id': 'ebdcc950-51c8-11e3-a804-1c6f65b044df'},
         ]
     },
     'L3 Agent': {
         'agents': [
             {'alive': True,
+             'host': 'cluster1-machine1.internal',
              'id': '7128198e-38ce-11e3-ba78-3c970e8b1cf7'},
             {'alive': True,
+             'host': 'cluster1-machine2.internal',
              'id': '72453824-38ce-11e3-938e-3c970e8b1cf7'},
             {'alive': True,
-             'id': '84a04126-38ce-11e3-9449-3c970e8b1cf7'}
+             'host': 'cluster2-machine1.internal',
+             'id': '84a04126-38ce-11e3-9449-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine3.internal',
+             'id': '00f4268a-51c9-11e3-9177-1c6f65b044df'},
         ]
     }
 }
 
-agents_some_dead = {
+agents_some_dead_cl1 = {
+    'DHCP Agent': {
+        'agents': [
+            {'alive': False,
+             'host': 'cluster1-machine1.internal',
+             'id': '3e3550f2-38cc-11e3-9617-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine1.internal',
+             'id': '53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine2.internal',
+             'id': '92b8b6bc-38ce-11e3-8537-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine3.internal',
+             'id': 'ebdcc950-51c8-11e3-a804-1c6f65b044df'},
+        ]
+    },
+    'L3 Agent': {
+        'agents': [
+            {'alive': False,
+             'host': 'cluster1-machine1.internal',
+             'id': '7128198e-38ce-11e3-ba78-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine1.internal',
+             'id': '72453824-38ce-11e3-938e-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine2.internal',
+             'id': '84a04126-38ce-11e3-9449-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine3.internal',
+             'id': '00f4268a-51c9-11e3-9177-1c6f65b044df'},
+        ]
+    }
+}
+
+agents_some_dead_cl2 = {
     'DHCP Agent': {
         'agents': [
             {'alive': True,
+             'host': 'cluster1-machine1.internal',
              'id': '3e3550f2-38cc-11e3-9617-3c970e8b1cf7'},
-            {'alive': False,
-             'id': '53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7'},
             {'alive': True,
-             'id': '92b8b6bc-38ce-11e3-8537-3c970e8b1cf7'}
+             'host': 'cluster2-machine1.internal',
+             'id': '53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7'},
+            {'alive': False,
+             'host': 'cluster2-machine2.internal',
+             'id': '92b8b6bc-38ce-11e3-8537-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine3.internal',
+             'id': 'ebdcc950-51c8-11e3-a804-1c6f65b044df'},
         ]
     },
     'L3 Agent': {
         'agents': [
             {'alive': True,
+             'host': 'cluster1-machine1.internal',
              'id': '7128198e-38ce-11e3-ba78-3c970e8b1cf7'},
             {'alive': True,
+             'host': 'cluster2-machine1.internal',
              'id': '72453824-38ce-11e3-938e-3c970e8b1cf7'},
             {'alive': False,
-             'id': '84a04126-38ce-11e3-9449-3c970e8b1cf7'}
+             'host': 'cluster2-machine2.internal',
+             'id': '84a04126-38ce-11e3-9449-3c970e8b1cf7'},
+            {'alive': True,
+             'host': 'cluster2-machine3.internal',
+             'id': '00f4268a-51c9-11e3-9177-1c6f65b044df'},
         ]
     }
 }
@@ -290,9 +381,15 @@ l3_agent_routers = {
     ]
 }
 
+cluster1 = ['cluster1-machine1.internal']
+cluster2 = ['cluster2-machine1.internal', 'cluster2-machine2.internal'
+            'cluster2-machine3.internal']
+
 
 class TestQuantumAgentReallocation(CharmTestCase):
     def setUp(self):
+        if not neutronclient:
+            raise self.skipTest('Skipping, no neutronclient installed')
         super(TestQuantumAgentReallocation, self).setUp(quantum_utils,
                                                         TO_PATCH)
 
@@ -324,12 +421,16 @@ class TestQuantumAgentReallocation(CharmTestCase):
         self.NetworkServiceContext.return_value = \
             DummyNetworkServiceContext(return_value=network_context)
         dummy_client = MagicMock()
-        dummy_client.list_agents.side_effect = agents_some_dead.itervalues()
+        dummy_client.list_agents.side_effect = \
+            agents_some_dead_cl2.itervalues()
         dummy_client.list_networks_on_dhcp_agent.return_value = \
             dhcp_agent_networks
         dummy_client.list_routers_on_l3_agent.return_value = \
             l3_agent_routers
         _client.return_value = dummy_client
+        self.unit_private_ip.return_value = 'cluster2-machine1.internal'
+        self.relations_of_type.return_value = \
+            [{'private-address': 'cluster2-machine3.internal'}]
         quantum_utils.reassign_agent_resources()
 
         # Ensure routers removed from dead l3 agent
@@ -340,19 +441,38 @@ class TestQuantumAgentReallocation(CharmTestCase):
                   router_id='baz')], any_order=True)
         # and re-assigned across the remaining two live agents
         dummy_client.add_router_to_l3_agent.assert_has_calls(
-            [call(l3_agent='7128198e-38ce-11e3-ba78-3c970e8b1cf7',
-                  body={'router_id': 'bong'}),
+            [call(l3_agent='00f4268a-51c9-11e3-9177-1c6f65b044df',
+                  body={'router_id': 'baz'}),
              call(l3_agent='72453824-38ce-11e3-938e-3c970e8b1cf7',
-                  body={'router_id': 'baz'})], any_order=True)
+                  body={'router_id': 'bong'})], any_order=True)
         # Ensure networks removed from dead dhcp agent
         dummy_client.remove_network_from_dhcp_agent.assert_has_calls(
-            [call(dhcp_agent='53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7',
+            [call(dhcp_agent='92b8b6bc-38ce-11e3-8537-3c970e8b1cf7',
                   network_id='foo'),
-             call(dhcp_agent='53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7',
+             call(dhcp_agent='92b8b6bc-38ce-11e3-8537-3c970e8b1cf7',
                   network_id='bar')], any_order=True)
         # and re-assigned across the remaining two live agents
         dummy_client.add_network_to_dhcp_agent.assert_has_calls(
-            [call(dhcp_agent='3e3550f2-38cc-11e3-9617-3c970e8b1cf7',
+            [call(dhcp_agent='53d6eefc-38cc-11e3-b3c8-3c970e8b1cf7',
                   body={'network_id': 'foo'}),
-             call(dhcp_agent='92b8b6bc-38ce-11e3-8537-3c970e8b1cf7',
+             call(dhcp_agent='ebdcc950-51c8-11e3-a804-1c6f65b044df',
                   body={'network_id': 'bar'})], any_order=True)
+
+    @patch('neutronclient.v2_0.client.Client')
+    def test_agents_down_relocation_impossible(self, _client):
+        self.NetworkServiceContext.return_value = \
+            DummyNetworkServiceContext(return_value=network_context)
+        dummy_client = MagicMock()
+        dummy_client.list_agents.side_effect = \
+            agents_some_dead_cl1.itervalues()
+        dummy_client.list_networks_on_dhcp_agent.return_value = \
+            dhcp_agent_networks
+        dummy_client.list_routers_on_l3_agent.return_value = \
+            l3_agent_routers
+        _client.return_value = dummy_client
+        self.unit_private_ip.return_value = 'cluster1-machine1.internal'
+        self.relations_of_type.return_value = []
+        quantum_utils.reassign_agent_resources()
+        self.log.assert_called()
+        assert not dummy_client.remove_router_from_l3_agent.called
+        assert not dummy_client.remove_network_from_dhcp_agent.called

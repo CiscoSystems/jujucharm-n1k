@@ -16,7 +16,7 @@ from charmhelpers.fetch import (
 )
 from charmhelpers.core.host import (
     restart_on_change,
-    lsb_release
+    lsb_release,
 )
 from charmhelpers.contrib.hahelpers.cluster import(
     eligible_leader
@@ -26,7 +26,7 @@ from charmhelpers.contrib.hahelpers.apache import(
 )
 from charmhelpers.contrib.openstack.utils import (
     configure_installation_source,
-    openstack_upgrade_available
+    openstack_upgrade_available,
 )
 from charmhelpers.payload.execd import execd_preinstall
 
@@ -42,6 +42,7 @@ from quantum_utils import (
     configure_ovs,
     reassign_agent_resources,
     n1kv_add_repo,
+    stop_services
 )
 from quantum_contexts import (
     DB_USER, QUANTUM_DB,
@@ -61,7 +62,6 @@ def install():
     if (lsb_release()['DISTRIB_CODENAME'] == 'precise' and
             src == 'distro'):
         src = 'cloud:precise-folsom'
-
     configure_installation_source(src)
     apt_update(fatal=True)
     if valid_plugin():
@@ -115,7 +115,9 @@ def amqp_joined(relation_id=None):
 
 
 @hooks.hook('shared-db-relation-changed',
-            'amqp-relation-changed')
+            'amqp-relation-changed',
+            'cluster-relation-changed',
+            'cluster-relation-joined')
 @restart_on_change(restart_map())
 def db_amqp_changed():
     CONFIGS.write_all()
@@ -130,6 +132,7 @@ def nm_changed():
 
 
 @hooks.hook("cluster-relation-departed")
+@restart_on_change(restart_map())
 def cluster_departed():
     if config('plugin') == 'nvp':
         log('Unable to re-assign agent resources for failed nodes with nvp',
@@ -141,7 +144,13 @@ def cluster_departed():
         return
     if eligible_leader(None):
         reassign_agent_resources()
+        CONFIGS.write_all()
 
+
+@hooks.hook('cluster-relation-broken')
+@hooks.hook('stop')
+def stop():
+    stop_services()
 
 if __name__ == '__main__':
     try:

@@ -49,6 +49,29 @@ The gateway provides two key services; L3 network routing and DHCP services.
 
 These are both required in a fully functional Neutron Openstack deployment.
 
+If multiple floating pools are needed then an L3 agent (which corresponds to
+a quantum-gateway for the sake of this charm) is needed for each one. Each
+gateway needs to be deployed as a seperate service so that the external
+network id can be set differently for each gateway e.g.
+
+    juju deploy quantum-gateway quantum-gateway-extnet1
+    juju add-relation quantum-gateway-extnet1 mysql
+    juju add-relation quantum-gateway-extnet1 rabbitmq-server
+    juju add-relation quantum-gateway-extnet1 nova-cloud-controller
+    juju deploy quantum-gateway quantum-gateway-extnet2
+    juju add-relation quantum-gateway-extnet2 mysql
+    juju add-relation quantum-gateway-extnet2 rabbitmq-server
+    juju add-relation quantum-gateway-extnet2 nova-cloud-controller
+
+    Create extnet1 and extnet2 via neutron client and take a note of their ids
+
+    juju set quantum-gateway-extnet1 "run-internal-router=leader"
+    juju set quantum-gateway-extnet2 "run-internal-router=none"
+    juju set quantum-gateway-extnet1 "external-network-id=<extnet1 id>"
+    juju set quantum-gateway-extnet2 "external-network-id=<extnet2 id>"
+
+See upstream [Neutron multi extnet](http://docs.openstack.org/trunk/config-reference/content/adv_cfg_l3_agent_multi_extnet.html)
+
 TODO
 ----
 

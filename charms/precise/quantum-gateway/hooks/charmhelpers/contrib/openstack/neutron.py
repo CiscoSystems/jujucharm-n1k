@@ -34,19 +34,23 @@ def quantum_plugins():
             'services': ['quantum-plugin-openvswitch-agent'],
             'packages': [[headers_package(), 'openvswitch-datapath-dkms'],
                          ['quantum-plugin-openvswitch-agent']],
+            'server_packages': ['quantum-server',
+                                'quantum-plugin-openvswitch'],
+            'server_services': ['quantum-server']
         },
         'nvp': {
             'config': '/etc/quantum/plugins/nicira/nvp.ini',
             'driver': 'quantum.plugins.nicira.nicira_nvp_plugin.'
                       'QuantumPlugin.NvpPluginV2',
+            'contexts': [
+                context.SharedDBContext(user=config('neutron-database-user'),
+                                        database=config('neutron-database'),
+                                        relation_prefix='neutron')],
             'services': [],
             'packages': [],
-        },
-        'n1kv': {
-            'config': '/etc/quantum/plugins/cisco/cisco_plugins.ini',
-            'driver': 'quantum.plugins.cisco.network_plugin.PluginV2',
-            'services': ['quantum-plugin-cisco'],
-            'packages': [['quantum-plugin-cisco']],
+            'server_packages': ['quantum-server',
+                                'quantum-plugin-nicira'],
+            'server_services': ['quantum-server']
         }
     }
 
@@ -66,25 +70,22 @@ def neutron_plugins():
             'services': ['neutron-plugin-openvswitch-agent'],
             'packages': [[headers_package(), 'openvswitch-datapath-dkms'],
                          ['quantum-plugin-openvswitch-agent']],
+            'server_packages': ['neutron-server',
+                                'neutron-plugin-openvswitch'],
+            'server_services': ['neutron-server']
         },
         'nvp': {
             'config': '/etc/neutron/plugins/nicira/nvp.ini',
             'driver': 'neutron.plugins.nicira.nicira_nvp_plugin.'
                       'NeutronPlugin.NvpPluginV2',
-            'services': [],
-            'packages': [],
-        },
-        'n1kv': {
-            'config': '/etc/neutron/plugins/cisco/cisco_plugins.ini',
-            'driver': 'neutron.plugins.cisco.network_plugin.PluginV2',
             'contexts': [
                 context.SharedDBContext(user=config('neutron-database-user'),
                                         database=config('neutron-database'),
                                         relation_prefix='neutron')],
-            'services': ['neutron-plugin-cisco'],
-            'packages': [['neutron-plugin-cisco']],
+            'services': [],
+            'packages': [],
             'server_packages': ['neutron-server',
-                                'neutron-plugin-cisco'],
+                                'neutron-plugin-nicira'],
             'server_services': ['neutron-server']
         }
     }

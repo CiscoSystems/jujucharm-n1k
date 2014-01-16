@@ -15,6 +15,7 @@ TO_PATCH = [
     'unit_get',
     'apt_install',
     'get_os_codename_install_source',
+    'eligible_leader',
 ]
 
 
@@ -139,6 +140,36 @@ class TestExternalPortContext(CharmTestCase):
         self.config.return_value = 'eth1010'
         self.assertEquals(quantum_contexts.ExternalPortContext()(),
                           {'ext_port': 'eth1010'})
+
+
+class TestL3AgentContext(CharmTestCase):
+    def setUp(self):
+        super(TestL3AgentContext, self).setUp(quantum_contexts,
+                                              TO_PATCH)
+        self.config.side_effect = self.test_config.get
+
+    def test_no_ext_netid(self):
+        self.test_config.set('run-internal-router', 'none')
+        self.test_config.set('external-network-id', '')
+        self.eligible_leader.return_value = False
+        self.assertEquals(quantum_contexts.L3AgentContext()(),
+                          {'handle_internal_only_router': False})
+
+    def test_hior_leader(self):
+        self.test_config.set('run-internal-router', 'leader')
+        self.test_config.set('external-network-id', 'netid')
+        self.eligible_leader.return_value = True
+        self.assertEquals(quantum_contexts.L3AgentContext()(),
+                          {'handle_internal_only_router': True,
+                           'ext_net_id': 'netid'})
+
+    def test_hior_all(self):
+        self.test_config.set('run-internal-router', 'all')
+        self.test_config.set('external-network-id', 'netid')
+        self.eligible_leader.return_value = True
+        self.assertEquals(quantum_contexts.L3AgentContext()(),
+                          {'handle_internal_only_router': True,
+                           'ext_net_id': 'netid'})
 
 
 class TestQuantumGatewayContext(CharmTestCase):

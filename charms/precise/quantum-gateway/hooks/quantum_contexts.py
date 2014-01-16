@@ -20,6 +20,9 @@ from charmhelpers.contrib.openstack.context import (
 from charmhelpers.contrib.openstack.utils import (
     get_os_codename_install_source
 )
+from charmhelpers.contrib.hahelpers.cluster import(
+    eligible_leader
+)
 
 DB_USER = "quantum"
 QUANTUM_DB = "quantum"
@@ -47,7 +50,7 @@ def networking_name():
     if get_os_codename_install_source(config('openstack-origin')) >= 'havana':
         return NEUTRON
     else:
-        return QUANTUM 
+        return QUANTUM
 
 OVS = 'ovs'
 NVP = 'nvp'
@@ -104,6 +107,23 @@ class NetworkServiceContext(OSContextGenerator):
                 if context_complete(ctxt):
                     return ctxt
         return {}
+
+
+class L3AgentContext(OSContextGenerator):
+    def __call__(self):
+        ctxt = {}
+        if config('run-internal-router') == 'leader':
+            ctxt['handle_internal_only_router'] = eligible_leader(None)
+
+        if config('run-internal-router') == 'all':
+            ctxt['handle_internal_only_router'] = True
+
+        if config('run-internal-router') == 'none':
+            ctxt['handle_internal_only_router'] = False
+
+        if config('external-network-id'):
+            ctxt['ext_net_id'] = config('external-network-id')
+        return ctxt
 
 
 class ExternalPortContext(OSContextGenerator):
