@@ -1,0 +1,50 @@
+quantum-gateway:
+  plugin: n1kv
+  ext-port: eth1
+  n1kv-source: << Introduce the private ppa here >>
+  openstack-origin: cloud:precise-havana
+nova-cloud-controller:
+  network-manager: Neutron
+  openstack-origin: cloud:precise-havana
+  n1kv-source: << Introduce the private ppa here >>
+  quantum-plugin: n1kv
+  n1kv-vsm-username: << Introduce the VSM username here >>
+  n1kv-vsm-password: << Introduce the VSM password here >>
+  n1kv-vsm-ip: << Introduce the VSM IP here >>
+ceph:
+  fsid: a51ce9ea-35cd-4639-9b5e-668625d3c1d8
+  monitor-secret: AQCk5+dR6NRDMRAAKUd3B8SdAD7jLJ5nbzxXXA==
+  osd-devices: /dev/vdb
+  source: cloud:precise-updates/havana
+cinder:
+  block-device: /dev/vdb
+  openstack-origin: cloud:precise-havana/updates
+  overwrite: 'true'
+glance:
+  openstack-origin: cloud:precise-havana/updates
+keystone:
+  admin-password: openstack
+  debug: 'true'
+  log-level: DEBUG
+  openstack-origin: cloud:precise-havana/updates
+nova-compute:
+  config-flags: auto_assign_floating_ip=True,compute_driver=libvirt.LibvirtDriver
+  enable-live-migration: 'True'
+  migration-auth-type: none
+  openstack-origin: cloud:precise-havana/updates
+  virt-type: kvm
+openstack-dashboard:
+  openstack-origin: cloud:precise-havana/updates
+  cisco-source: << Introduce the private ppa here >>
+  profile-support: cisco
+swift-proxy:
+  auth-type: keystone
+  country: US
+  locale: San Francisco
+  openstack-origin: cloud:precise-havana/updates
+  state: CA
+  zone-assignment: auto
+swift-storage:
+  block-device: /dev/vdb
+  openstack-origin: cloud:precise-havana/updates
+  overwrite: 'true'

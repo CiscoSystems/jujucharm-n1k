@@ -59,3 +59,9 @@ options:
         - deb http://my.archive.com/ubuntu main|KEYID
       .
       Note that this is used only for Cisco n1kv plugin.
+  l3-agent:
+    type: string
+    default: enable 
+    description: |
+      Optional configuration to support use of linux router
+      Note that this is used only for Cisco n1kv plugin.

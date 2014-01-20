@@ -400,12 +400,14 @@ class NeutronContext(object):
     def n1kv_ctxt(self):
         driver = neutron_plugin_attribute(self.plugin, 'driver',
                                           self.network_manager)
-
+        config = neutron_plugin_attribute(self.plugin, 'config',
+                                          self.network_manager)
         n1kv_ctxt = {
             'core_plugin': driver,
             'neutron_plugin': 'n1kv',
             'neutron_security_groups': self.neutron_security_groups,
             'local_ip': unit_private_ip(),
+            'config': config
         }
 
         return n1kv_ctxt
