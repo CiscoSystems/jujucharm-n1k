@@ -31,6 +31,9 @@ juju deploy -u --config ./openstack.yaml --repository=. local:precise/nova-cloud
 juju deploy -u --to=1 --config ./openstack.yaml --repository=. local:precise/glance
 juju deploy --config ./openstack.yaml openstack-dashboard
 
+# Deploy VEM
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/vem
+
 # Relate the services
 juju add-relation keystone mysql
 juju add-relation nova-cloud-controller mysql
@@ -55,6 +58,10 @@ juju add-relation quantum-gateway nova-cloud-controller
 juju add-relation quantum-gateway rabbitmq-server
 juju add-relation cinder ceph
 juju add-relation glance ceph
+
+# VEM is a subordinate charm so we need to add relation to deply the VEM on compute and network nodes
+juju add-relation nova-compute vem
+juju add-relation quantum-gateway vem
 
 # Expose openstack-dashboard
 juju expose openstack-dashboard

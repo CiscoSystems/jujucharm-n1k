@@ -87,7 +87,7 @@ QUANTUM_GATEWAY_PKGS = {
         "python-mysqldb",
         "nova-api-metadata",
         "neutron-common",
-        "neutron-l3-agent"
+        "quantum-l3-agent"
     ]
 }
 
@@ -126,7 +126,7 @@ GATEWAY_PKGS = {
 EARLY_PACKAGES = {
     OVS: ['openvswitch-datapath-dkms'],
     NVP: [],
-    N1KV: []
+    N1KV: ['openvswitch-datapath-dkms']
 }
 
 
@@ -285,7 +285,13 @@ QUANTUM_N1KV_CONFIG_FILES.update(QUANTUM_SHARED_CONFIG_FILES)
 NEUTRON_N1KV_CONFIG_FILES = {
     NEUTRON_CONF: {
         'hook_contexts': [context.AMQPContext()],
-        'services': ['neutron-dhcp-agent', 'neutron-metadata-agent']
+        'services': ['neutron-dhcp-agent',
+                     'neutron-metadata-agent']
+    },
+    NEUTRON_L3_AGENT_CONF: {
+        'hook_contexts': [NetworkServiceContext(),
+                          L3AgentContext()],
+        'services': ['neutron-l3-agent']
     },
 }
 NEUTRON_N1KV_CONFIG_FILES.update(NEUTRON_SHARED_CONFIG_FILES)
@@ -480,3 +486,10 @@ def configure_ovs():
         if not service_running('openvswitch-switch'):
             full_restart()
         add_bridge(INT_BRIDGE)
+
+def n1kv_add_repo():
+    src = config('n1kv-source')
+    if src.startswith('ppa:') or src.startswith('deb'):
+        configure_installation_source(src)
+
+    

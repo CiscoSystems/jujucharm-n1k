@@ -51,6 +51,12 @@ def quantum_plugins():
             'server_packages': ['quantum-server',
                                 'quantum-plugin-nicira'],
             'server_services': ['quantum-server']
+        },
+        'n1kv': {
+            'config': '/etc/quantum/plugins/cisco/cisco_plugins.ini',
+            'driver': 'quantum.plugins.cisco.network_plugin.PluginV2',
+            'services': ['quantum-plugin-cisco'],
+            'packages': [['quantum-plugin-cisco']],
         }
     }
 
@@ -86,6 +92,19 @@ def neutron_plugins():
             'packages': [],
             'server_packages': ['neutron-server',
                                 'neutron-plugin-nicira'],
+            'server_services': ['neutron-server']
+        },
+        'n1kv': {
+            'config': '/etc/neutron/plugins/cisco/cisco_plugins.ini',
+            'driver': 'neutron.plugins.cisco.network_plugin.PluginV2',
+            'contexts': [
+                context.SharedDBContext(user=config('neutron-database-user'),
+                                        database=config('neutron-database'),
+                                        relation_prefix='neutron')],
+            'services': ['neutron-plugin-cisco'],
+            'packages': [['neutron-plugin-cisco']],
+            'server_packages': ['neutron-server',
+                                'neutron-plugin-cisco'],
             'server_services': ['neutron-server']
         }
     }

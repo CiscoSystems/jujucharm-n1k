@@ -17,6 +17,9 @@ from charmhelpers.fetch import (
 from charmhelpers.core.host import (
     restart_on_change,
     lsb_release,
+    service_start,
+    service_stop,
+    service_running,
 )
 from charmhelpers.contrib.hahelpers.cluster import(
     eligible_leader
@@ -85,7 +88,13 @@ def config_changed():
     else:
         log('Please provide a valid plugin config', level=ERROR)
         sys.exit(1)
-
+    if config('plugin') == 'n1kv':
+        if config('l3-agent') == 'enable':
+            if not service_running('neutron-l3-agent'):
+                service_start('neutron-l3-agent')
+        else:
+            if service_running('neutron-l3-agent'):
+                service_stop('neutron-l3-agent')
 
 @hooks.hook('upgrade-charm')
 def upgrade_charm():
@@ -129,7 +138,6 @@ def nm_changed():
     CONFIGS.write_all()
     if relation_get('ca_cert'):
         install_ca_cert(relation_get('ca_cert'))
-
 
 @hooks.hook("cluster-relation-departed")
 @restart_on_change(restart_map())

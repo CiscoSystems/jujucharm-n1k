@@ -48,3 +48,7 @@ swift-storage:
   block-device: /dev/vdb
   openstack-origin: cloud:precise-havana/updates
   overwrite: 'true'
+vem:
+  vsm_ip: << Introduce the VSM ip here >>
+  vsm_domain_id: << Introduce the VSM domain id here >>
+  uplink_profile: "phys <interface> profile <port-profile>"
