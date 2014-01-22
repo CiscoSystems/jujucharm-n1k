@@ -2,17 +2,22 @@
 
 source ./common.sh
 
-#Remove the native bridge module if it is already loaded
-function remove_bridge_module {
-    #Check for the existence of bridge module
-    if test -e /sys/module/bridge; then
-        logger "bridge module is loaded"
+function add_havana_apt_repo {
+     logger "Install python-software-properties"
+     sudo sudo apt-get install -y python-software-properties
+     logger "Installing python-software-properties done"
 
-        #Remove the bridge module
-        /sbin/modprobe -r bridge
-    else
-        logger "bridge module is not loaded"
-    fi
+     logger "Install add-apt-repo cloud-archive:havana"
+     sudo add-apt-repository -y cloud-archive:havana
+     logger "Installing add-apt-repo cloud-archive:havana done"
+
+     logger "Install add-apt-repo cloud-archive:havana"
+     sudo apt-get update
+     logger "apt-get update done"
+
+     logger "Install add-apt-repo cloud-archive:havana"
+     sudo apt-cache policy openvswitch-switch
+     logger "installing openvswitch-switch done"
 }
 
 #Install the dependency packages
@@ -32,16 +37,20 @@ function install_vsm_dependency_pacakges {
     sudo apt-get install -y kvm
 
     #Install the libvirt-bin package
-    logger "Install the libvirt-bin package"
-    sudo apt-get install -y libvirt-bin
+    #logger "Install the libvirt-bin package"
+    #sudo apt-get install -y libvirt-bin
 
     #Install the virtinst package
-    logger "Install the virtinst package"
-    sudo apt-get install -y virtinst
+    #logger "Install the virtinst package"
+    #sudo apt-get install -y virtinst
 
     #Install the genisoimage package
     logger "Install the kvm package"
     sudo apt-get install -y genisoimage
+
+    #Install the python-cheetah package
+    logger "Install the python-cheetah package"
+    sudo apt-get install -y python-cheetah
 }
 
 #Remove and disable auto start for virsh network
@@ -74,8 +83,8 @@ function vish_remove_network {
 function install_ovs_components {
 
     #Install the ovs components and all dependency packages
-    logger "Install the OVS components [openvswitch brcompat, switch & datapath source]"
-    apt-get install -y openvswitch-brcompat openvswitch-switch openvswitch-datapath-source
+    logger "Install the OVS components [openvswitch switch & datapath source & dkms]"
+    sudo apt-get install -y openvswitch-switch openvswitch-datapath-source openvswitch-datapath-dkms
 
     #check and install the openvswitch-data for the kernel version
     logger "Install openvswitch-data based on kernel version"
@@ -86,9 +95,10 @@ function install_ovs_components {
       /usr/bin/module-assistant --text-mode auto-install openvswitch-datapath
     fi
 
-    logger "Update BRCOMPAT to yes in /etc/default/openvswitch-switch"
-    cheetah fill --env --oext compiled templates/openvswitch-switch.tmpl
-    cp templates/openvswitch-switch.compiled /etc/default/openvswitch-switch
+    #This step is not required with 1.10.2 openvswitch-switch
+    #logger "Update BRCOMPAT to yes in /etc/default/openvswitch-switch"
+    #cheetah fill --env --oext compiled templates/openvswitch-switch.tmpl
+    #cp templates/openvswitch-switch.compiled /etc/default/openvswitch-switch
 
     logger "Done with installation of ovs components"
 }
@@ -110,9 +120,9 @@ function start_openvswitch {
 }
 
 #Start the install hook
+add_havana_apt_repo
 install_vsm_dependency_pacakges
 vish_remove_network
-##remove_bridge_module
 install_ovs_components
 start_openvswitch
 
