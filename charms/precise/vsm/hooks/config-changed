@@ -67,6 +67,19 @@ function generate_vsm_vm_xml {
     logger "vsm_vm.xml creation done" 
 }
 
+function download_vsm_iso_from_ppa {
+tee /etc/apt/sources.list.d/springfield-ppa.list <<EOF
+deb https://shivrao:ZSCc3jxB4RMLrLqZlp9T@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main #Personal access of Shiv Prasad Rao (shivrao) to Cisco Nexus 1000v Staging PPA
+deb-src https://shivrao:ZSCc3jxB4RMLrLqZlp9T@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main #Personal access of Shiv Prasad Rao (shivrao) to Cisco Nexus 1000v Staging PPA
+EOF
+
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F5DB2BA06DB3EEB4
+    apt-get update
+    apt-get install nexus-1000v-iso
+    cp /opt/cisco/iso/$isoimage /var/spool/vsm/.
+}
+
+download_vsm_iso_from_ppa
 update_ovs_interfaces
 repack_iso
 generate_vsm_vm_xml
