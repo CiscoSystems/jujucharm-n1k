@@ -220,14 +220,6 @@ def register_configs():
         configs.register(cfg, rscs['contexts'])
     return configs
 
-def register_openrc():
-    release = os_release('nova-common')
-    configs = templating.OSConfigRenderer(templates_dir=TEMPLATES,
-                                          openstack_release=release)
-    configs.register(config_file='/root/openrc',
-                          contexts=[nova_cc_context.OpenrcContext()])
-    return configs
-
 def restart_map():
     return OrderedDict([(cfg, v['services'])
                         for cfg, v in resource_map().iteritems()

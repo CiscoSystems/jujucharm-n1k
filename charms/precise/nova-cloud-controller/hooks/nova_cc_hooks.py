@@ -109,13 +109,6 @@ def config_changed():
     save_script_rc()
     configure_https()
     CONFIGS.write_all()
-    
-    if (config('quantum-plugin') == 'n1kv'):
-#        register_openrc().write_all()        
-        if os.path.isfile('/root/openrc'):
-            command = ['bash', '-c', 'source /root/openrc'] #"source /root/openrc"
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-            output = process.communicate()[0]
 
 @hooks.hook('amqp-relation-joined')
 def amqp_joined(relation_id=None):
