@@ -56,7 +56,6 @@ from nova_cc_utils import (
     ssh_known_hosts_b64,
     ssh_authorized_keys_b64,
     register_configs,
-    register_openrc,
     restart_map,
     volume_service,
     n1kv_add_repo,
