@@ -176,3 +176,11 @@ options:
         - deb http://my.archive.com/ubuntu main|KEYID
       .
       Note that this is used only for Cisco n1kv plugin.
+  keystone-usrname:
+    type: string
+    default: admin
+    description: Username to connect to keystone
+  keystone-password:
+    type: string
+    default: openstack
+    description: Password to connect to keystone

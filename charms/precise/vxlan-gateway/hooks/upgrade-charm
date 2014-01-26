@@ -1,0 +1,24 @@
+#!/bin/bash
+# This hook is executed each time a charm is upgraded after the new charm
+# contents have been unpacked
+# Best practice suggests you execute the hooks/install and
+# hooks/config-changed to ensure all updates are processed
+
+source ./common.sh
+
+function download_vxgw {
+logger "search for vxgw updates..."
+apt-get update
+logger "Download vxlan-gateway updated package"
+apt-get install -y vxlan-gateway
+}
+
+function load_vxgw_to_glance {
+glance image-delete vx-gw
+logger "loading vx-gw up-to-date image to glance"
+glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
+}
+
+download_vxgw
+load_vxgw_to_glance
+

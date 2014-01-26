@@ -76,6 +76,7 @@ NEUTRON_CONF = '/etc/neutron/neutron.conf'
 HAPROXY_CONF = '/etc/haproxy/haproxy.cfg'
 APACHE_CONF = '/etc/apache2/sites-available/openstack_https_frontend'
 APACHE_24_CONF = '/etc/apache2/sites-available/openstack_https_frontend.conf'
+OPENRC = '/root/openrc'
 NEUTRON_DEFAULT = '/etc/default/neutron-server'
 QUANTUM_DEFAULT = '/etc/default/quantum-server'
 
@@ -138,6 +139,10 @@ BASE_RESOURCE_MAP = OrderedDict([
     (APACHE_24_CONF, {
         'contexts': [nova_cc_context.ApacheSSLContext()],
         'services': ['apache2'],
+    }),
+    (OPENRC, {
+        'contexts': [nova_cc_context.OpenrcContext(), context.IdentityServiceContext()],
+        'services': [],
     }),
 ])
 
@@ -215,6 +220,13 @@ def register_configs():
         configs.register(cfg, rscs['contexts'])
     return configs
 
+def register_openrc():
+    release = os_release('nova-common')
+    configs = templating.OSConfigRenderer(templates_dir=TEMPLATES,
+                                          openstack_release=release)
+    configs.register(config_file='/root/openrc',
+                          contexts=[nova_cc_context.OpenrcContext()])
+    return configs
 
 def restart_map():
     return OrderedDict([(cfg, v['services'])

@@ -1,0 +1,54 @@
+quantum-gateway:
+  plugin: n1kv
+  ext-port: eth1
+  n1kv-source: deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main|F5DB2BA06DB3EEB4
+  openstack-origin: cloud:precise-havana
+nova-cloud-controller:
+  network-manager: Neutron
+  openstack-origin: cloud:precise-havana
+  n1kv-source: deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main|F5DB2BA06DB3EEB4
+  quantum-plugin: n1kv
+  n1kv-vsm-username: admin
+  n1kv-vsm-password: Sfish123
+  n1kv-vsm-ip: 10.10.10.250
+ceph:
+  fsid: a51ce9ea-35cd-4639-9b5e-668625d3c1d8
+  monitor-secret: AQCk5+dR6NRDMRAAKUd3B8SdAD7jLJ5nbzxXXA==
+  osd-devices: /dev/vdb
+  source: cloud:precise-updates/havana
+cinder:
+  block-device: /dev/vdb
+  openstack-origin: cloud:precise-havana/updates
+  overwrite: 'true'
+glance:
+  openstack-origin: cloud:precise-havana/updates
+keystone:
+  admin-password: openstack
+  debug: 'true'
+  log-level: DEBUG
+  openstack-origin: cloud:precise-havana/updates
+nova-compute:
+  config-flags: auto_assign_floating_ip=True,compute_driver=libvirt.LibvirtDriver
+  enable-live-migration: 'True'
+  migration-auth-type: none
+  openstack-origin: cloud:precise-havana/updates
+  virt-type: kvm
+openstack-dashboard:
+  openstack-origin: cloud:precise-havana/updates
+  cisco-source: deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main|F5DB2BA06DB3EEB4
+  profile-support: cisco
+swift-proxy:
+  auth-type: keystone
+  country: US
+  locale: San Francisco
+  openstack-origin: cloud:precise-havana/updates
+  state: CA
+  zone-assignment: auto
+swift-storage:
+  block-device: /dev/vdb
+  openstack-origin: cloud:precise-havana/updates
+  overwrite: 'true'
+vem:
+  vsm_ip: "10.10.10.250"
+  vsm_domain_id: 1000
+  uplink_profile: "phys eth2 profile sys-uplink"

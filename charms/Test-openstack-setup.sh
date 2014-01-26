@@ -3,8 +3,8 @@
 # - mysql
 # - rabbitmq-server
 # - openstack-dashboard
-#juju deploy --to=0 mysql
-#juju deploy --to=0 rabbitmq-server
+juju deploy --to=0 mysql
+juju deploy --to=0 rabbitmq-server
 
 # Deploy the services that will require their
 # own instance so we can speed up the process
