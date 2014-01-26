@@ -1,28 +1,12 @@
 options:
   ovsbridge:
     type: string
-    default: "br0"
+    default: "br-int"
     description: "ovs bridge behind which the vsm will be attached"
   physicalinterfaceforovs:
     type: string
     default: "eth0"
     description: "physical uplink interface for the ovs bridge"
-  nodeip:
-    type: string
-    default: "20.1.1.100"
-    description: "node ip address in which the vsm vm will be spawned"
-  nodenetmask:
-    type: string
-    default: "255.255.255.0"
-    description: "node netmask in which the vsm vm will be spawned"
-  nodegateway:
-    type: string
-    default: "20.1.1.1"
-    description: "node gateway in which the vsm vm will be spawned"
-  nodedns:
-    type: string
-    default: "dns.cisco.com"
-    description: "node dns name server address"
   vsmname:
     type: string
     default: "vsm-p"
@@ -33,7 +17,7 @@ options:
     description: "VSM virtual machine name"
   isoimage:
     type: string
-    default: "n1000v-dk9.5.2.1.SK1.2.0.8.iso"
+    default: "n1000v-dk9.5.2.1.SK1.2.1.iso"
     description: "VSM virtual machine name"
   vsmrole:
     type: string

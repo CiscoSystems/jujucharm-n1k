@@ -2,28 +2,15 @@
 # This hook is run directly after install
 # i.e. 'service apache2 start'
 
-source ./common.sh
-
-function qemu_img_create {
-    logger "Check and create the qemu-img"
-    vsm_running=`/usr/bin/virsh list | grep -c ' $vsmname .* running'`
-
-    if [ $vsm_running -eq 0 ]; then
-      /usr/bin/qemu-img create -f raw $diskfile ${disksize}G
-      logger "qemu-img create done"
-    fi
-}
-
 function create_vsm_vm {
     logger "Check and virsh create the vsm vm"
     vsm_running=`/usr/bin/virsh list | grep -c ' $vsmname .* running'`
 
     if [ $vsm_running -eq 0 ]; then
-      /usr/bin/virsh create $targetxmlfile
+      /usr/bin/virsh create /var/spool/vsm/vsm_vm.xml
       logger "virsh create of vsm vm done"
     fi
 
 }
 
-qemu_img_create
 create_vsm_vm

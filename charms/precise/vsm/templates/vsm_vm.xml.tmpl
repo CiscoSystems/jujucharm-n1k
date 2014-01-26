@@ -1,6 +1,6 @@
 <domain type='kvm' >
      <name>${vsmname}</name>
-     <memory unit='KiB'>${memory}</memory>
+     <memory unit='KiB'>2048000</memory>
      <vcpu placement='static'>${vcpu}</vcpu>
 
      <os>
@@ -66,7 +66,7 @@
           </console>
 
           <input type='mouse' bus='ps2'/>
-          <graphics type='vnc' port='5901' autoport='no' listen='0.0.0.0' keymap='en-us'>
+          <graphics type='vnc' port='8901' autoport='no' listen='0.0.0.0' keymap='en-us'>
           </graphics>
 
       </devices>
