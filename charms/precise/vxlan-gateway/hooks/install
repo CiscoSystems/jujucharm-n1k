@@ -1,0 +1,28 @@
+#!/bin/bash
+# Here do anything needed to install the service
+# Make sure this hook exits cleanly and is idempotent, common problems here are
+# failing to account for a debconf question on a dependency, or trying to pull
+# from github without installing git first.
+
+#source hooks/common.sh
+
+function add_repo {
+echo 'deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main' >> /etc/apt/sources.list.d/springfield-ppa.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F5DB2BA06DB3EEB4
+}
+
+function download_vxgw {
+apt-get update
+#logger "Download vxlan-gateway package"
+apt-get install -y vxgw-qcow2
+}
+
+function load_vxgw_to_glance {
+#logger "loading vx-gw image to glance"
+source /root/openrc
+glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < /opt/cisco/n1kv/vxgw/vxgw.5.2.1.SK1.2.1.disk1.qcow2
+#glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
+}
+
+download_vxgw
+load_vxgw_to_glance

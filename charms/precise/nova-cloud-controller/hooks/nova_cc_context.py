@@ -164,3 +164,12 @@ class IdentityServiceContext(context.IdentityServiceContext):
                                                       ctxt['service_port'])
         ctxt['keystone_ec2_url'] = ec2_tokens
         return ctxt
+
+class OpenrcContext(context.IdentityServiceContext):
+    def __call__(self):
+        ctxt = {}
+
+        ctxt['os_username'] = config('keystone-usrname')
+        ctxt['os_password'] = config('keystone-password')
+        return ctxt
+

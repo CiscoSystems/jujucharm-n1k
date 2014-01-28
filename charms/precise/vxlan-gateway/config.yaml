@@ -1,0 +1,5 @@
+options:
+  vxgw-img-name:
+    type: string
+    default: "vx-gw.qcow2"
+    description: "vxlan gw image name"
