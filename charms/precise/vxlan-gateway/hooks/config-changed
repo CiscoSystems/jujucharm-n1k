@@ -1,17 +1,12 @@
 #!/bin/bash
 # config-changed occurs everytime a new configuration value is updated (juju set)
 
-function download_vxgw {
-apt-get update
-#logger "Download vxlan-gateway package"
-apt-get install -y vxgw-qcow2
-}
-
 function load_vxgw_to_glance {
-#logger "loading vx-gw image to glance"
-sleep 5
 source /root/openrc
-glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < /opt/cisco/n1kv/vxgw/vxgw.5.2.1.SK1.2.1.disk1.qcow2
+FILENAME=/opt/cisco/n1kv/vxgw/vxgw.5.2.1.SK1.2.1.disk1.qcow2
+    if [-f $FILENAME ]; then
+        glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+    fi
 #glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
 }
 
