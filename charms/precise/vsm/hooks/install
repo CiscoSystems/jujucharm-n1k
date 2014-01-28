@@ -101,30 +101,11 @@ function install_ovs_components {
     juju-log "Done with installation of ovs components"
 }
 
-#start the openvswitch
-function start_openvswitch {
-    juju-log "Start the openvswitch process"
-    /usr/sbin/service openvswitch-switch start
-
-    reload_kmod=`/usr/sbin/service openvswitch-switch status | /bin/grep -c 'ovs-brcompatd is not running'`
-    if [ $reload_kmod -eq 1 ]; then
-      juju-log "Force reload the new openvswitch kernel module"
-      /etc/init.d/openvswitch-switch force-reload-kmod
-    fi
-
-    juju-log "Add the ovs bridge"
-    /usr/bin/ovs-vsctl -- --may-exist add-br br-int
-    
-    juju-log "sleep for 1min after adding the ovs bridge"
-    sleep 60
-}
-
 #Start the install hook
 add_havana_apt_repo
 install_vsm_dependency_pacakges
 vish_remove_network
 install_ovs_components
-start_openvswitch
 
 #Create the vsm directory in /var/spool
 if [ ! -d /var/spool/vsm ]; then

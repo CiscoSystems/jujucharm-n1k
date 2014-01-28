@@ -38,6 +38,25 @@ export isoimage finaliso diskfile disksize consolepts
 export domainid vsmname mgmtip mgmtnetmask mgmtgateway adminpasswd vsmrole
 export ctrlinterface ctrlmac mgmtinterface mgmtmac pktinterface pktmac memory vcpu
 
+#start the openvswitch
+function start_openvswitch {
+    juju-log "Start the openvswitch process"
+    /usr/sbin/service openvswitch-switch start
+
+    reload_kmod=`/usr/sbin/service openvswitch-switch status | /bin/grep -c 'ovs-brcompatd is not running'`
+    if [ $reload_kmod -eq 1 ]; then
+      juju-log "Force reload the new openvswitch kernel module"
+      /etc/init.d/openvswitch-switch force-reload-kmod
+    fi
+
+    juju-log "Add the ovs bridge"
+    /usr/bin/ovs-vsctl -- --may-exist add-br $ovsbridge
+    /usr/bin/ovs-vsctl -- --may-exist add-port $ovsbridge $physicalinterfaceforovs
+    /sbin/brctl delif br0 $physicalinterfaceforovs
+    ifconfig br0 0.0.0.0 0.0.0.0
+    /usr/sbin/service openvswitch-switch restart
+
+}
 
 #Move the phsical interface to ovs bridge
 function update_ovs_interfaces {
@@ -89,7 +108,8 @@ function qemu_img_create {
 }
 
 download_vsm_iso_from_ppa
-#update_ovs_interfaces
+start_openvswitch
+update_ovs_interfaces
 repack_iso
 generate_vsm_vm_xml
 qemu_img_create
