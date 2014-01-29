@@ -187,6 +187,18 @@ def update_n1kv_config():
 
 
 #------------------------------------------------------------------------------
+# ifconfig: ifconfig int <int-name> <up/down>
+#
+#------------------------------------------------------------------------------
+def ifconfig(interface, state):
+   juju_log("ifconfig %s %s" % (interface, state))
+   try:
+      subprocess.call(["ifconfig", interface, state])
+   except Exception, e:
+      subprocess.call(['juju-log', str(e)])
+
+
+#------------------------------------------------------------------------------
 # enable_uplink: Enable uplink interfaces
 #
 #------------------------------------------------------------------------------
@@ -194,3 +206,5 @@ def enable_uplink(uplink_conf):
    uplink_conf = uplink_conf.replace(', ', '\n').replace(',','\n').split('\n')
    for k in uplink_conf:
       ifconfig(k.split(" ")[1], "up")
+
+
