@@ -184,12 +184,13 @@ def update_n1kv_config():
    outfile.close()
    #subprocess.call(["service", "n1kv", "restart"])
    subprocess.call(["vemcmd", "reread", "config"])
-  
-#vemcmd reread config # re-reads the /etc/n1kv/n1kv.conf
+
 
 #------------------------------------------------------------------------------
-# create_vtep: Creates a vtep port on the OVS on a VXGW setup
+# enable_uplink: Enable uplink interfaces
 #
 #------------------------------------------------------------------------------
-def create_vtep(vtep_name, vtpe_port_profile):
-   print "TODO: EXEC ovsctl vtep command"
+def enable_uplink(uplink_conf):
+   uplink_conf = uplink_conf.replace(', ', '\n').replace(',','\n').split('\n')
+   for k in uplink_conf:
+      ifconfig(k.split(" ")[1], "up")
