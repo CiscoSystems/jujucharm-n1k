@@ -1,4 +1,14 @@
 options:
+  vem-origin:
+    default: distro
+    type: string
+    description: |
+      Repository from which to install.  May be one of the following:
+      distro (default), ppa:somecustom/ppa, a deb url sources entry,
+      or a supported Cloud Archive release pocket.
+
+      Supported Cloud Archive sources include
+    
   vsm_ip:
     type: string
     default: "10.10.10.250"

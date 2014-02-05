@@ -1,12 +1,12 @@
 quantum-gateway:
   plugin: n1kv
   ext-port: eth1
-  n1kv-source: << Introduce the private ppa here >>
+  n1kv-source: deb << Introduce the private ppa here >>
   openstack-origin: cloud:precise-havana
 nova-cloud-controller:
   network-manager: Neutron
   openstack-origin: cloud:precise-havana
-  n1kv-source: << Introduce the private ppa here >>
+  n1kv-source: deb << Introduce the private ppa here >>
   quantum-plugin: n1kv
   n1kv-vsm-username: << Introduce the VSM username here >>
   n1kv-vsm-password: << Introduce the VSM password here >>
@@ -35,7 +35,7 @@ nova-compute:
   virt-type: kvm
 openstack-dashboard:
   openstack-origin: cloud:precise-havana/updates
-  cisco-source: << Introduce the private ppa here >>
+  cisco-source: deb << Introduce the private ppa here >>
   profile-support: cisco
 swift-proxy:
   auth-type: keystone
@@ -49,6 +49,7 @@ swift-storage:
   openstack-origin: cloud:precise-havana/updates
   overwrite: 'true'
 vem:
+  vem-origin: deb << Private PPA source >>
   vsm_ip: << Introduce the VSM ip here >>
   vsm_domain_id: << Introduce the VSM domain id here >>
   uplink_profile: "phys <interface> profile <port-profile>"
