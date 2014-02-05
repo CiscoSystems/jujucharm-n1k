@@ -1,0 +1,7 @@
+#!/bin/bash
+
+vsm_domain_id=$(config-get vsm_domain_id)
+vsm_ip=$(config-get vsm_ip)
+
+relation-set vsm_domain_id=$vsm_domain_id
+relation-set vsm_ip=$vsm_ip
