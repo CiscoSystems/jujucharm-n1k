@@ -29,7 +29,7 @@ juju deploy -u --config ./openstack.yaml --repository=. local:precise/quantum-ga
 juju deploy -u --to=1 --config ./openstack.yaml --repository=. local:precise/cinder
 juju deploy -u --config ./openstack.yaml --repository=. local:precise/nova-cloud-controller --to=1 
 juju deploy -u --to=1 --config ./openstack.yaml --repository=. local:precise/glance
-juju deploy --config ./openstack.yaml openstack-dashboard
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/openstack-dashboard
 
 # Deploy VEM
 juju deploy -u --config ./openstack.yaml --repository=. local:precise/vem
