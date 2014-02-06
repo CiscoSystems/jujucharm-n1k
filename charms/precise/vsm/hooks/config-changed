@@ -107,9 +107,14 @@ function qemu_img_create {
     fi
 }
 
-download_vsm_iso_from_ppa
-start_openvswitch
-update_ovs_interfaces
-repack_iso
-generate_vsm_vm_xml
-qemu_img_create
+vsm_running=`/usr/bin/virsh list | grep -c ' $vsmname .* running'`
+if [ $vsm_running -eq 0 ]; then
+    download_vsm_iso_from_ppa
+    start_openvswitch
+    update_ovs_interfaces
+    repack_iso
+    generate_vsm_vm_xml
+    qemu_img_create
+fi
+
+hooks/dvs-relation-joined
