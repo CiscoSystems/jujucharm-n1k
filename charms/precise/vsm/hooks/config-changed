@@ -74,7 +74,7 @@ function update_ovs_interfaces {
 #Repack the nexus 1k iso
 function repack_iso {
     juju-log "Repack the VSM ISO with the setup script enviornment variables"
-    ./hooks/lib/repackiso.py -i $isoimage -d $domainid -n $vsmname -m $mgmtip -s $mgmtnetmask -g $mgmtgateway -p $adminpasswd -r $vsmrole -f $finaliso
+    ./hooks/lib/repackiso.py -i $isofile -d $domainid -n $vsmname -m $mgmtip -s $mgmtnetmask -g $mgmtgateway -p $adminpasswd -r $vsmrole -f $finaliso
 }
 
 #Generate the vsm vm xml file
