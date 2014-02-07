@@ -5,4 +5,5 @@ n1kv_conf:
    uplink_profile:
    vtep_config:
    node_type:
-
+   vem-origin:
+   vsm_conf_from_rel: 'false'

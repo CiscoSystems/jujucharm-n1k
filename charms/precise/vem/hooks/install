@@ -27,8 +27,7 @@ from charmhelpers.contrib.openstack.utils import (
     openstack_upgrade_available
 )
 from charmhelpers.payload.execd import execd_preinstall
-import os, shutil, subprocess
-
+import os, shutil, subprocess, yaml, common
 
 DEP_PKGS = {
         "libnl1",
@@ -62,3 +61,12 @@ if not os.path.exists('/etc/n1kv'):
    subprocess.check_call(cmd)
 
 apt_install(VEM_PKGS,['--force-yes'],fatal=True)
+
+with open('data.yaml', 'r') as f:
+   temp=f.read()
+   n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
+   n1kv_conf_data["n1kv_conf"]["vem-origin"]=common.config_get('vem-origin')
+with open('data.yaml', 'w') as f:
+   f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
+
+
