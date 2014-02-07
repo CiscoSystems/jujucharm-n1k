@@ -109,7 +109,6 @@ NEUTRON_GATEWAY_PKGS = {
     ],
     N1KV: [
         "neutron-plugin-cisco",
-        "openvswitch-switch",
         "neutron-dhcp-agent",
         "python-mysqldb",
         "nova-api-metadata",
@@ -126,7 +125,7 @@ GATEWAY_PKGS = {
 EARLY_PACKAGES = {
     OVS: ['openvswitch-datapath-dkms'],
     NVP: [],
-    N1KV: ['openvswitch-datapath-dkms']
+    N1KV: []
 }
 
 
@@ -482,10 +481,6 @@ def configure_ovs():
         ext_port = config('ext-port')
         if ext_port:
             add_bridge_port(EXT_BRIDGE, ext_port)
-    if config('plugin') == N1KV:
-        if not service_running('openvswitch-switch'):
-            full_restart()
-        add_bridge(INT_BRIDGE)
 
 def n1kv_add_repo():
     src = config('n1kv-source')
