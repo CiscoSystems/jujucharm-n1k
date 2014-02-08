@@ -6,4 +6,4 @@
 # balancer to stop sending traffic.
 # rm /srv/webroot/server-live.txt && sleep 30
 
-#service n1kv stop
+service n1kv stop
