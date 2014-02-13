@@ -33,8 +33,8 @@ DEP_PKGS = {
         "libnl1",
         "build-essential",
         "linux-headers-generic",
-        "openvswitch-common=1.4.0-1ubuntu1.5",
-        "openvswitch-switch=1.4.0-1ubuntu1.5",
+        "openvswitch-common=1.4*",
+        "openvswitch-switch=1.4*",
 }
 VEM_PKGS = {
         "nexus-1000v-vem-dkms",
