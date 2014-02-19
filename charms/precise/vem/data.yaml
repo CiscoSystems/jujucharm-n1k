@@ -7,3 +7,4 @@ n1kv_conf:
    node_type:
    vem-origin:
    vsm_conf_from_rel: 'false'
+   vtep_in_same_subnet:

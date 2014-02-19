@@ -37,3 +37,7 @@ options:
     type: string
     default: ""
     description: "Host Specific configuration mapping"
+  vtep_in_same_subnet:
+    type: string
+    default: "no"
+    description: "If vteps created are in same subnet for the purpose of loadbalancing, rpf checking is set to loose mode for all interfaces on the compute node and the quantum-gateway"

@@ -17,13 +17,14 @@ hostname = socket.gethostname()
 #     mapping = f.read()
 #hostname = "ubuntu-local-machine-0"
 
+
 #TODO:Send config_data instead of just mapping string
 host_conf = common.get_host_specific_config(hostname)
 vtep_name = None
 with open('data.yaml', 'r') as f:
    temp=f.read()
    n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
-   if (common.config_get('vem-origin') != n1kv_conf_data["n1kv_conf"]["vem-origin"]):# or (common.config_get('vsm_ip') != n1kv_conf_data["n1kv_conf"]["vem-origin"]):
+   if (common.config_get('vem-origin') != n1kv_conf_data["n1kv_conf"]["vem-origin"]):# or (common.config_get('verion') != n1kv_conf_data["n1kv_conf"]["vem-origin"]):
       subprocess.call("hooks/install")
    n1kv_conf_data["n1kv_conf"]["vem-origin"]=common.config_get('vem-origin')
    if (n1kv_conf_data["n1kv_conf"]["vsm_conf_from_rel"] == "false"):
@@ -32,13 +33,22 @@ with open('data.yaml', 'r') as f:
    n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"]=host_conf['host_mgmt_intf']
    n1kv_conf_data["n1kv_conf"]["uplink_profile"]=host_conf['uplink_profile']
    n1kv_conf_data["n1kv_conf"]["node_type"]=host_conf['node_type']
+   n1kv_conf_data["n1kv_conf"]["vtep_in_same_subnet"]=host_conf['vtep_in_same_subnet']
    if 'vtep_config' in host_conf:
       n1kv_conf_data["n1kv_conf"]["vtep_config"]=host_conf['vtep_config']
 with open('data.yaml', 'w') as f:
    f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
 
-common.update_n1kv_config()
 
+if n1kv_conf_data["n1kv_conf"]["vtep_in_same_subnet"] == "yes":
+   #if not os.path.isfile("/etc/sysctl.d/60-n1kv.conf"):
+   f = open("/etc/sysctl.d/60-n1kv.conf", 'w')
+   f.writelines(["net.ipv4.conf.default.rp_filter=2\n", "net.ipv4.conf.all.rp_filter=2\n", "net.ipv4.conf.default.arp_ignore=1\n", "net.ipv4.conf.all.arp_ignore=1\n", "net.ipv4.conf.all.arp_announce=2\n", "net.ipv4.conf.default.arp_announce=2\n"])
+   f.close()
+   subprocess.call(["sysctl", "-p", "/etc/sysctl.d/60-n1kv.conf"])
+
+common.update_n1kv_config()
 #Enable all required uplink on the host (ifconfig <interface> up)
 common.enable_uplink(n1kv_conf_data["n1kv_conf"]["uplink_profile"])
+common.enable_uplink(n1kv_conf_data["n1kv_conf"]["vtep_config"])
 

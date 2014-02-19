@@ -155,6 +155,7 @@ def get_host_specific_config(hostname):
         'uplink_profile': map_conf['uplink_profile'] if 'uplink_profile' in map_conf else config_get('uplink_profile'),
         'vtep_config': map_conf['vtep_config'] if 'vtep_config' in map_conf else config_get('vtep_config'),
         'node_type': map_conf['node_type'] if 'node_type' in map_conf else config_get('node_type'),
+        'vtep_in_same_subnet': map_conf['vtep_in_same_subnet'] if 'vtep_in_same_subnet' in map_conf else config_get('vtep_in_same_subnet'),
      }
      return host_conf
 
@@ -182,8 +183,8 @@ def update_n1kv_config():
    outfile = file('/etc/n1kv/n1kv.conf', 'w')
    outfile.write(str(t2))
    outfile.close()
-   #subprocess.call(["service", "n1kv", "restart"])
-   subprocess.call(["vemcmd", "reread", "config"])
+   subprocess.call(["service", "n1kv", "restart"])
+   #subprocess.call(["vemcmd", "reread", "config"])
 
 
 #------------------------------------------------------------------------------
