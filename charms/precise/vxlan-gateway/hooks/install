@@ -6,24 +6,31 @@
 
 
 function add_repo {
-echo 'deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main' >> /etc/apt/sources.list.d/springfield-ppa.list
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F5DB2BA06DB3EEB4
+  source=$(config-get n1kv-source)
+  arr_source=($source)  
+  if [ ${arr_source[0]} == 'deb' ];then
+    key=`cut -d "|" -f 2 <<< "$source"`
+    deb_source=`cut -d "|" -f 1 <<< "$source"`
+    echo $deb_source >> /etc/apt/sources.list.d/springfield-ppa.list
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $key
+  fi
 }
 
 function download_vxgw {
 apt-get update
-#logger "Download vxlan-gateway package"
-apt-get install -y vxgw-qcow2
-FILENAME=/opt/cisco/n1kv/vxgw/vxgw.5.2.1.SK1.2.1.disk1.qcow2 
-FILESIZE=$(stat -c%s "$FILENAME")
+version=$(config-get vxgw-img-version)"."
+apt-get install -y vxgw
+FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version"disk1.qcow2"
 
 while [ ! -f $FILENAME ]; do
-    sleep 1
+    sleep 3
 done
 
+FILESIZE=$(stat -c%s "$FILENAME")
+
 if [ -f $FILENAME ]; then
-    if [ $FILESIZE < 118000000 ]; then 
-        sleep 1
+    if [ $FILESIZE < 118000000 ]; then
+        sleep 1    
     fi
 fi
 }
