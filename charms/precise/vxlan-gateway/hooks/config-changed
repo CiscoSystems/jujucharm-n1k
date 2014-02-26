@@ -2,15 +2,39 @@
 # config-changed occurs everytime a new configuration value is updated (juju set)
 
 function load_vxgw_to_glance {
+  version=$(config-get vxgw-img-version)
+  if [ "$version" != "latest" ];then
+    FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
+  else
+    PKG_NAME=`ls -t vxgw.5.2.1.SK1.* | head -1`
+    FILENAME=/opt/cisco/n1kv/vxgw/$PKG_NAME
+  fi
 
-  source /root/openrc
-
-  version=$(config-get vxgw-img-version)"."
-  FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version"disk1.qcow2"
-
-    if [ -f $FILENAME ]; then
-        glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+  if [ -f $FILENAME ]; then
+    FILESIZE=$(stat -c%s "$FILENAME")
+    FILESIZE_LIMIT=118000000
+    if [ "$FILESIZE" -lt "$FILESIZE_LIMIT" ]; then
+      sleep 5
     fi
+   
+    openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
+    TIMEOUT=20
+    while [ "$openrc_ready" = ":" ]; do
+      sleep 30
+      TIMEOUT=$((TIMEOUT - 1))
+      echo $TIMEOUT
+      openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
+      if [ "$TIMEOUT" = "0" ]; then
+        juju-log "incomplete openrc. please upload the image manually"
+        exit 1
+      fi
+    done
+
+    juju-log "source openrc"
+    source /root/openrc
+    juju-log "upload vxgw image"
+    glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+  fi
 #glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
 }
 

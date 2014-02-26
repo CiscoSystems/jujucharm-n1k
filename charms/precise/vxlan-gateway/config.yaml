@@ -11,5 +11,6 @@ options:
       Note that this is used only for Cisco n1kv plugin.
   vxgw-img-version:
     type: string
-    default: "2.2"
-    description: "vxlan gw image version"
+    default: latest
+    description: |
+      Provides the vxlan gw image version. Default is the latest in the provided source.

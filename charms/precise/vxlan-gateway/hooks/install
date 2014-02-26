@@ -6,7 +6,13 @@
 
 
 function add_repo {
+  # get the source from input config.
   source=$(config-get n1kv-source)
+  if [ "$source" == "distro" ]; then
+    juju-log "n1kv-source not provided. please enter a n1kv-source"
+    exit 1
+  fi
+
   arr_source=($source)  
   if [ ${arr_source[0]} == 'deb' ];then
     key=`cut -d "|" -f 2 <<< "$source"`
@@ -17,22 +23,29 @@ function add_repo {
 }
 
 function download_vxgw {
-apt-get update
-version=$(config-get vxgw-img-version)"."
-apt-get install -y vxgw
-FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version"disk1.qcow2"
+  apt-get update
+  version=$(config-get vxgw-img-version)
+  juju-log "Installing vxgw"
+  apt-get install -y vxgw
 
-while [ ! -f $FILENAME ]; do
-    sleep 3
-done
+  if [ "$version" != "latest" ];then
+    FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
+  else
+    PKG_NAME=`ls -t vxgw.5.2.1.SK1.* | head -1`
+    FILENAME=/opt/cisco/n1kv/vxgw/$PKG_NAME
+  fi
 
-FILESIZE=$(stat -c%s "$FILENAME")
+  while [ ! -f $FILENAME ]; do
+    sleep 1
+  done
 
-if [ -f $FILENAME ]; then
-    if [ $FILESIZE < 118000000 ]; then
-        sleep 1    
+  FILESIZE=$(stat -c%s "$FILENAME")
+  FILESIZE_LIMIT=118000000
+  if [ -f $FILENAME ]; then
+    if [ "$FILESIZE" -lt "$FILESIZE_LIMIT" ]; then
+        sleep 5    
     fi
-fi
+  fi
 }
 
 download_vxgw
