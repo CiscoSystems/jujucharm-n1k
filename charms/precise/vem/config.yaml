@@ -27,7 +27,7 @@ options:
     description: "Port-Profile mapping for all UVEM managed Interfaces"
   vtep_config:
     type: string
-    default: ""
+    default: " "
     description: "VTEP config. Syntax: virt <port-name> profile <profile-name> [mode static|dhcp] [address <ipaddr>]"
   node_type:
     type: string
