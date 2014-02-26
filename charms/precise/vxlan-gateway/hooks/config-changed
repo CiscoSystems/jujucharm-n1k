@@ -22,9 +22,8 @@ function load_vxgw_to_glance {
     while [ "$openrc_ready" = ":" ]; do
       sleep 30
       TIMEOUT=$((TIMEOUT - 1))
-      echo $TIMEOUT
       openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
-      if [ "$TIMEOUT" = "0" ]; then
+      if [ "$TIMEOUT" -eq "0" ]; then
         juju-log "incomplete openrc. please upload the image manually"
         exit 1
       fi
