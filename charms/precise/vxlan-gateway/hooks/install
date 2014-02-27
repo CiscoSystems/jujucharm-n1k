@@ -23,7 +23,7 @@ function add_repo {
 
 function download_vxgw {
   apt-get update
-  version=$(config-get vxgw-img-version)
+  version=$(config-get vxgw-version)
   apt-get install -y vxgw
 
   if [ "$version" != "latest" ];then

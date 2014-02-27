@@ -2,7 +2,7 @@
 # config-changed occurs everytime a new configuration value is updated (juju set)
 
 function load_vxgw_to_glance {
-  version=$(config-get vxgw-img-version)
+  version=$(config-get vxgw--version)
   if [ "$version" != "latest" ];then
     FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
   else

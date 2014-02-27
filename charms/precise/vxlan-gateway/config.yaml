@@ -9,7 +9,7 @@ options:
         - deb http://my.archive.com/ubuntu main|KEYID
       .
       Note that this is used only for Cisco n1kv plugin.
-  vxgw-img-version:
+  vxgw-version:
     type: string
     default: latest
     description: |

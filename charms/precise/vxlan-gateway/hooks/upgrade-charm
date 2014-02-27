@@ -6,7 +6,7 @@
 
 function download_vxgw {
   apt-get update
-  version=$(config-get vxgw-img-version)
+  version=$(config-get vxgw--version)
   apt-get install -y vxgw
   if [ "$version" != "latest" ];then
     FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
@@ -31,7 +31,7 @@ function load_vxgw_to_glance {
 
   source /root/openrc
 
-  version=$(config-get vxgw-img-version)
+  version=$(config-get vxgw--version)
   if [ "$version" != "latest" ];then
     FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
   else
