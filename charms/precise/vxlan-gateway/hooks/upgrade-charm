@@ -7,7 +7,6 @@
 function download_vxgw {
   apt-get update
   version=$(config-get vxgw-img-version)
-  juju-log "Installing vxgw"
   apt-get install -y vxgw
   if [ "$version" != "latest" ];then
     FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
@@ -54,13 +53,10 @@ function load_vxgw_to_glance {
       echo $TIMEOUT
       openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
       if [ "$TIMEOUT" = "0" ]; then
-        juju-log "Incomplete openrc.please upload manually"
         exit 1
       fi
     done
-    juju-log "source openrc"
     source /root/openrc
-    juju-log "upload vxgw image"
 
     glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
   fi

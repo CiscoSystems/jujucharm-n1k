@@ -9,7 +9,6 @@ function add_repo {
   # get the source from input config.
   source=$(config-get n1kv-source)
   if [ "$source" == "distro" ]; then
-    juju-log "n1kv-source not provided. please enter a n1kv-source"
     exit 1
   fi
 
@@ -25,7 +24,6 @@ function add_repo {
 function download_vxgw {
   apt-get update
   version=$(config-get vxgw-img-version)
-  juju-log "Installing vxgw"
   apt-get install -y vxgw
 
   if [ "$version" != "latest" ];then

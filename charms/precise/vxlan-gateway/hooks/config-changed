@@ -20,18 +20,15 @@ function load_vxgw_to_glance {
     openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
     TIMEOUT=20
     while [ "$openrc_ready" = ":" ]; do
-      sleep 30
+      sleep 60
       TIMEOUT=$((TIMEOUT - 1))
       openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
       if [ "$TIMEOUT" -eq "0" ]; then
-        juju-log "incomplete openrc. please upload the image manually"
         exit 1
       fi
     done
 
-    juju-log "source openrc"
     source /root/openrc
-    juju-log "upload vxgw image"
     glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
   fi
 #glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
