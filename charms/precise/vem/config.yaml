@@ -1,5 +1,5 @@
 options:
-  vem-origin:
+  n1kv-source:
     default: distro
     type: string
     description: |
@@ -9,11 +9,11 @@ options:
 
       Supported Cloud Archive sources include
     
-  vsm_ip:
+  n1kv-vsm-ip:
     type: string
-    default: "10.10.10.250"
+    default: "10.10.10.10"
     description: "Management ip of VSM"
-  vsm_domain_id:
+  n1kv-vsm-domain-id:
     type: int
     default: 1000
     description: "Domain id this vsm will be controlling"
@@ -37,6 +37,14 @@ options:
     type: string
     default: ""
     description: "Host Specific configuration mapping"
+  n1kv-version:
+    type: string
+    default: ""
+    description: "Version number of VEM packages. If left blank, it will pick up the latest"
+  n1kv-local-repo:
+    type: string
+    default: ""
+    description: "Provide the local address of VEM bits"
   vtep_in_same_subnet:
     type: string
     default: "no"

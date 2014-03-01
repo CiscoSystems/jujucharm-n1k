@@ -24,12 +24,13 @@ vtep_name = None
 with open('data.yaml', 'r') as f:
    temp=f.read()
    n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
-   if (common.config_get('vem-origin') != n1kv_conf_data["n1kv_conf"]["vem-origin"]):# or (common.config_get('verion') != n1kv_conf_data["n1kv_conf"]["vem-origin"]):
+   if (common.config_get('n1kv-source') != n1kv_conf_data["n1kv_conf"]["n1kv-source"]) or (common.config_get('n1kv-version') != n1kv_conf_data["n1kv_conf"]["n1kv-version"]):
       subprocess.call("hooks/install")
-   n1kv_conf_data["n1kv_conf"]["vem-origin"]=common.config_get('vem-origin')
+   n1kv_conf_data["n1kv_conf"]["n1kv-source"]=common.config_get('n1kv-source')
+   n1kv_conf_data["n1kv_conf"]["n1kv-version"]=common.config_get('n1kv-version')
    if (n1kv_conf_data["n1kv_conf"]["vsm_conf_from_rel"] == "false"):
-      n1kv_conf_data["n1kv_conf"]["vsm_ip"]=host_conf['vsm_ip']
-      n1kv_conf_data["n1kv_conf"]["vsm_domain_id"]=host_conf['vsm_domain_id']
+      n1kv_conf_data["n1kv_conf"]["n1kv-vsm-ip"]=host_conf['n1kv-vsm-ip']
+      n1kv_conf_data["n1kv_conf"]["n1kv-vsm-domain-id"]=host_conf['n1kv-vsm-domain-id']
    n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"]=host_conf['host_mgmt_intf']
    n1kv_conf_data["n1kv_conf"]["uplink_profile"]=host_conf['uplink_profile']
    n1kv_conf_data["n1kv_conf"]["node_type"]=host_conf['node_type']
