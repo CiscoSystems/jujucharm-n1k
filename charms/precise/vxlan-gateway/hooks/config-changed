@@ -12,7 +12,7 @@ function load_vxgw_to_glance {
     fi
    
     openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
-    TIMEOUT=20
+    TIMEOUT=30
     while [ "$openrc_ready" = ":" ]; do
       sleep 60
       TIMEOUT=$((TIMEOUT - 1))
