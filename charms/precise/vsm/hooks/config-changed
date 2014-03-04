@@ -65,7 +65,7 @@ function update_ovs_interfaces {
     juju-log "using eth-config.tmpl to create eth-config"
     cheetah fill --env --oext compiled templates/eth-config.tmpl
     juju-log "copy the compiled template to /etc/network/"
-    cp templates/eth-config.compiled /etc/network/${physicalinterfaceforovs}.config
+    cp templates/eth-config.compiled /etc/network/interfaces
 
     juju-log "restart the networking service"
     /etc/init.d/networking restart

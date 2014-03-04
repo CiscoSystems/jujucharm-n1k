@@ -149,8 +149,8 @@ def get_host_specific_config(hostname):
                map_conf = v
      juju_log("Applying general config")
      host_conf = { 
-       'vsm_ip': map_conf['vsm_ip'] if 'vsm_ip' in map_conf else config_get('vsm_ip'),
-        'vsm_domain_id': map_conf['vsm_ip'] if 'vsm_ip' in map_conf else config_get('vsm_domain_id'),
+        'n1kv-vsm-ip': map_conf['n1kv-vsm-ip'] if 'n1kv-vsm-ip' in map_conf else config_get('n1kv-vsm-ip'),
+        'n1kv-vsm-domain-id': map_conf['n1kv-vsm-domain-id'] if 'n1kv-vsm-domain-id' in map_conf else config_get('n1kv-vsm-domain-id'),
         'host_mgmt_intf': map_conf['host_mgmt_intf'] if 'host_mgmt_intf' in map_conf else config_get('host_mgmt_intf'),
         'uplink_profile': map_conf['uplink_profile'] if 'uplink_profile' in map_conf else config_get('uplink_profile'),
         'vtep_config': map_conf['vtep_config'] if 'vtep_config' in map_conf else config_get('vtep_config'),
@@ -174,8 +174,8 @@ def update_n1kv_config():
    t2 = Template( file = 'templates/n1kv.conf.tmpl', 
         searchList = [{ 'host_mgmt_intf':n1kv_conf_data["n1kv_conf"]["host_mgmt_intf"],
                         'uplink_profile':n1kv_conf_data["n1kv_conf"]["uplink_profile"].replace(', ', '\n').replace(',','\n'),
-                        'vsm_ip':n1kv_conf_data["n1kv_conf"]["vsm_ip"],
-                        'vsm_domain_id':n1kv_conf_data["n1kv_conf"]["vsm_domain_id"],   
+                        'vsm_ip':n1kv_conf_data["n1kv_conf"]["n1kv-vsm-ip"],
+                        'vsm_domain_id':n1kv_conf_data["n1kv_conf"]["n1kv-vsm-domain-id"],   
                         'node_type':n1kv_conf_data["n1kv_conf"]["node_type"],   
                         'vtep_config':n1kv_conf_data["n1kv_conf"]["vtep_config"].replace(', ', '\n').replace(',','\n')   
                       }])
@@ -207,5 +207,82 @@ def enable_uplink(uplink_conf):
    uplink_conf = uplink_conf.replace(', ', '\n').replace(',','\n').split('\n')
    for k in uplink_conf:
       ifconfig(k.split(" ")[1], "up")
+
+
+def import_key(keyid):
+    cmd = "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 " \
+          "--recv-keys %s" % keyid
+    try:
+        subprocess.check_call(cmd.split(' '))
+    except subprocess.CalledProcessError:
+        error_out("Error importing repo key %s" % keyid)
+
+def configure_installation_source(rel):
+    '''Configure apt installation source.'''
+    rel_list = rel.replace(', ', '\n').replace(',','\n').split('\n')
+    if os.path.exists('/etc/apt/sources.list.d/n1k_deb.list'):
+       os.remove('/etc/apt/sources.list.d/n1k_deb.list')
+    for rel in rel_list:
+       if rel == 'distro':
+           return
+       elif rel[:4] == "ppa:":
+           src = rel
+           subprocess.check_call(["add-apt-repository", "-y", src])
+       elif rel[:3] == "deb":
+           l = len(rel.split('|'))
+           if l == 2:
+               src, key = rel.split('|')
+               juju_log("Importing PPA key from keyserver for %s" % src)
+               import_key(key)
+           elif l == 1:
+               src = rel
+           with open('/etc/apt/sources.list.d/n1k_deb.list', 'ab+') as f:
+               f.write("%s \n" % (src))
+       elif rel[:6] == 'cloud:':
+           ubuntu_rel = lsb_release()['DISTRIB_CODENAME']
+           rel = rel.split(':')[1]
+           u_rel = rel.split('-')[0]
+           ca_rel = rel.split('-')[1]
+
+           if u_rel != ubuntu_rel:
+               e = 'Cannot install from Cloud Archive pocket %s on this Ubuntu '\
+                   'version (%s)' % (ca_rel, ubuntu_rel)
+               error_out(e)
+
+           if 'staging' in ca_rel:
+               # staging is just a regular PPA.
+               os_rel = ca_rel.split('/')[0]
+               ppa = 'ppa:ubuntu-cloud-archive/%s-staging' % os_rel
+               cmd = 'add-apt-repository -y %s' % ppa
+               subprocess.check_call(cmd.split(' '))
+               return
+
+
+        # map charm config options to actual archive pockets.
+           pockets = {
+               'folsom': 'precise-updates/folsom',
+               'folsom/updates': 'precise-updates/folsom',
+               'folsom/proposed': 'precise-proposed/folsom',
+               'grizzly': 'precise-updates/grizzly',
+               'grizzly/updates': 'precise-updates/grizzly',
+               'grizzly/proposed': 'precise-proposed/grizzly',
+               'havana': 'precise-updates/havana',
+               'havana/updates': 'precise-updates/havana',
+               'havana/proposed': 'precise-proposed/havana',
+           }
+
+           try:
+               pocket = pockets[ca_rel]
+           except KeyError:
+               e = 'Invalid Cloud Archive release specified: %s' % rel
+               error_out(e)
+
+           src = "deb %s %s main" % (CLOUD_ARCHIVE_URL, pocket)
+           apt_install('ubuntu-cloud-keyring', fatal=True)
+
+           with open('/etc/apt/sources.list.d/cloud-archive.list', 'ab+') as f:
+               f.write("%s \n" % (src))
+       else:
+           error_out("Invalid openstack-release specified: %s" % rel)
 
 

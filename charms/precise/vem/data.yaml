@@ -1,10 +1,11 @@
 n1kv_conf:
-   vsm_ip:
-   vsm_domain_id:
+   n1kv-vsm-ip:
+   n1kv-vsm-domain-id:
+   n1kv-version:
    host_mgmt_intf:
    uplink_profile:
    vtep_config:
    node_type:
-   vem-origin:
+   n1kv-source:
    vsm_conf_from_rel: 'false'
    vtep_in_same_subnet:

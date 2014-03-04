@@ -22,8 +22,10 @@ from charmhelpers.fetch import (
 from charmhelpers.contrib.hahelpers.apache import(
     install_ca_cert
 )
+from common import (
+   configure_installation_source
+)
 from charmhelpers.contrib.openstack.utils import (
-    configure_installation_source,
     openstack_upgrade_available
 )
 from charmhelpers.payload.execd import execd_preinstall
@@ -37,10 +39,9 @@ DEP_PKGS = {
         "openvswitch-switch=1.4*",
 }
 VEM_PKGS = {
-        "nexus-1000v-vem-dkms",
-        "nexus-1000v-vem",
+   "nexus-1000v-vem-dkms=%s*" % (config('n1kv-version')) if config('n1kv-version').strip() else 'nexus-1000v-vem-dkms',
+   "nexus-1000v-vem=%s*" % (config('n1kv-version')) if config('n1kv-version').strip() else 'nexus-1000v-vem'
 }
-
 def touch(fname):
     if os.path.exists(fname):
         os.utime(fname, None)
@@ -48,7 +49,7 @@ def touch(fname):
         open(fname, 'w').close()
 
 execd_preinstall()
-src = config('vem-origin')
+src = config('n1kv-source')
 configure_installation_source(src)
 apt_update(fatal=True)
 apt_install(DEP_PKGS,['--force-yes'],fatal=True)
@@ -65,7 +66,7 @@ apt_install(VEM_PKGS,['--force-yes'],fatal=True)
 with open('data.yaml', 'r') as f:
    temp=f.read()
    n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
-   n1kv_conf_data["n1kv_conf"]["vem-origin"]=common.config_get('vem-origin')
+   n1kv_conf_data["n1kv_conf"]["n1kv-source"]=common.config_get('n1kv-source')
 with open('data.yaml', 'w') as f:
    f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
 

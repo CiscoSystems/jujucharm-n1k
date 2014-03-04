@@ -17,8 +17,8 @@ with open('data.yaml', 'r') as f:
    n1kv_conf_data = yaml.load(temp, Loader=yaml.loader.BaseLoader)
 
 n1kv_conf_data["n1kv_conf"]["vsm_conf_from_rel"] = 'true'
-n1kv_conf_data["n1kv_conf"]["vsm_ip"]=common.relation_get('vsm_ip')
-n1kv_conf_data["n1kv_conf"]["vsm_domain_id"]=common.relation_get('vsm_domain_id')
+n1kv_conf_data["n1kv_conf"]["n1kv-vsm-ip"]=common.relation_get('vsm_ip')
+n1kv_conf_data["n1kv_conf"]["n1kv-vsm-domain-id"]=common.relation_get('vsm_domain_id')
 
 with open('data.yaml', 'w') as f:
    f.write(yaml.dump(n1kv_conf_data, default_flow_style=True) )
