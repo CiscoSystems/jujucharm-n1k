@@ -6,6 +6,9 @@
 
 
 function add_repo {
+  # remove old repos
+  rm -f /etc/apt/sources.list.d/springfield-ppa.list
+
   # get the source from input config.
   source=$(config-get n1kv-source)
   if [ "$source" == "distro" ]; then
@@ -15,24 +18,43 @@ function add_repo {
   arr_source=($source)  
   if [ ${arr_source[0]} == 'deb' ];then
     key=`cut -d "|" -f 2 <<< "$source"`
-    deb_source=`cut -d "|" -f 1 <<< "$source"`
-    echo $deb_source >> /etc/apt/sources.list.d/springfield-ppa.list
+    deb_sources=`cut -d "|" -f 1 <<< "$source"`
+    No_repos=`awk -F',' '{ print NF }' <<<"$deb_sources"`
+    i=1
+    while [ "$No_repos" -ne "0" ]; do
+      deb_source=`cut -d "," -f $i <<< "$deb_sources"` 
+      echo $deb_source >> /etc/apt/sources.list.d/springfield-ppa.list
+      i=$((i + 1))
+      No_repos=$((No_repos - 1))
+    done    
+
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $key
   fi
+
 }
 
 function download_vxgw {
+  #Cleanup the old vxgw images if exists
+  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none`
+  if [ "$vxgw_installed" = "" ]; then
+    apt-get remove -y vxgw
+  fi
+  rm -f /opt/cisco/n1kv/vxgw/*
+
   apt-get update
-  version=$(config-get vxgw-version)
-  apt-get install -y vxgw
+
+  version=$(config-get n1kv-version)
+  # SK is small letters in PPA
+  #  git_version=`echo $version | tr '[:upper:]' '[:lower:]'`
 
   if [ "$version" != "latest" ];then
-    FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
+    apt-get install -y vxgw="$version"*
   else
-    PKG_NAME=`ls -t vxgw.5.2.1.SK1.* | head -1`
-    FILENAME=/opt/cisco/n1kv/vxgw/$PKG_NAME
+    apt-get install -y vxgw
+ #   FILENAME=`ls -t /opt/cisco/n1kv/vxgw/vxgw* | sort -Vr | head -1`
   fi
 
+  FILENAME=`ls /opt/cisco/n1kv/vxgw/*`
   while [ ! -f $FILENAME ]; do
     sleep 1
   done
@@ -46,4 +68,5 @@ function download_vxgw {
   fi
 }
 
+add_repo
 download_vxgw

@@ -5,15 +5,22 @@
 # hooks/config-changed to ensure all updates are processed
 
 function download_vxgw {
-  apt-get update
-  version=$(config-get vxgw--version)
-  apt-get install -y vxgw
-  if [ "$version" != "latest" ];then
-    FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
-  else
-    PKG_NAME=`ls -t vxgw.5.2.1.SK1.* | head -1`
-    FILENAME=/opt/cisco/n1kv/vxgw/$PKG_NAME
+  #remove already installed vxgw
+  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none`
+  if [ "$vxgw_installed" = "" ]; then
+    apt-get remove -y vxgw
   fi
+  rm -f /opt/cisco/n1kv/vxgw/*
+  apt-get update
+  version=$(config-get n1kv-version)
+
+  if [ "$version" != "latest" ];then
+    apt-get install -y vxgw="$version"*
+  else
+    apt-get install -y vxgw
+  fi
+
+  FILENAME=/opt/cisco/n1kv/vxgw/*
   while [ ! -f $FILENAME ]; do
     sleep 2
   done
@@ -28,16 +35,7 @@ function download_vxgw {
 }
 
 function load_vxgw_to_glance {
-
-  source /root/openrc
-
-  version=$(config-get vxgw--version)
-  if [ "$version" != "latest" ];then
-    FILENAME=/opt/cisco/n1kv/vxgw/"vxgw.5.2.1.SK1."$version".disk1.qcow2"
-  else
-    PKG_NAME=`ls -t vxgw.5.2.1.SK1.* | head -1`
-    FILENAME=/opt/cisco/n1kv/vxgw/$PKG_NAME
-  fi
+  FILENAME=/opt/cisco/n1kv/vxgw/*
   if [ -f $FILENAME ]; then
     FILESIZE=$(stat -c%s "$FILENAME")
     FILESIZE_LIMIT=118000000
@@ -52,13 +50,15 @@ function load_vxgw_to_glance {
       TIMEOUT=$((TIMEOUT - 1))
       echo $TIMEOUT
       openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
-      if [ "$TIMEOUT" = "0" ]; then
+      if [ "$TIMEOUT" -eq "0" ]; then
         exit 1
       fi
     done
     source /root/openrc
 
     glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+  else
+    exit 1
   fi
 #glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
 }
