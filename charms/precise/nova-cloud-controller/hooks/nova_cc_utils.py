@@ -513,7 +513,3 @@ def neutron_plugin():
     # as we only supported OVS in G/neutron
     return config('neutron-plugin') or config('quantum-plugin')
 
-def n1kv_add_repo():
-    src = config('n1kv-source')
-    if src.startswith('ppa:') or src.startswith('deb'):
-        configure_installation_source(src)

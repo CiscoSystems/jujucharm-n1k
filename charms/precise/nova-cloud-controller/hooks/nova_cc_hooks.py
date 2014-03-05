@@ -58,7 +58,6 @@ from nova_cc_utils import (
     register_configs,
     restart_map,
     volume_service,
-    n1kv_add_repo,
     CLUSTER_RES,
     NOVA_CONF,
     QUANTUM_CONF,
@@ -84,7 +83,6 @@ def install():
     execd_preinstall()
     plugin = config('quantum-plugin')
     if (plugin == 'n1kv'):
-        n1kv_add_repo()
         command = "cp templates/havana/openrc /root/"
         process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
         output = process.communicate()[0]

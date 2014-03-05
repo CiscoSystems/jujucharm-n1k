@@ -166,16 +166,6 @@ options:
     type: string
     default: 10.10.10.10
     description: IP to connect to cisco n1kv VSM 
-  n1kv-source:
-    type: string
-    default: distro
-    description: |
-      Optional configuration to support use of additional sources such as:
-      .
-        - ppa:myteam/ppa
-        - deb http://my.archive.com/ubuntu main|KEYID
-      .
-      Note that this is used only for Cisco n1kv plugin.
   keystone-usrname:
     type: string
     default: admin

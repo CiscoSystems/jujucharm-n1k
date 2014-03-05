@@ -482,9 +482,5 @@ def configure_ovs():
         if ext_port:
             add_bridge_port(EXT_BRIDGE, ext_port)
 
-def n1kv_add_repo():
-    src = config('n1kv-source')
-    if src.startswith('ppa:') or src.startswith('deb'):
-        configure_installation_source(src)
 
     

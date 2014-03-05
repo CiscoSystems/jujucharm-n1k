@@ -44,7 +44,6 @@ from quantum_utils import (
     valid_plugin,
     configure_ovs,
     reassign_agent_resources,
-    n1kv_add_repo,
     stop_services
 )
 from quantum_contexts import (
@@ -59,8 +58,6 @@ CONFIGS = register_configs()
 @hooks.hook('install')
 def install():
     execd_preinstall()
-    if config('plugin') == 'n1kv':
-        n1kv_add_repo()
     src = config('openstack-origin')
     if (lsb_release()['DISTRIB_CODENAME'] == 'precise' and
             src == 'distro'):

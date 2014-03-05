@@ -49,16 +49,6 @@ options:
   rabbit-vhost:
     type: string
     default: openstack
-  n1kv-source:
-    type: string
-    default: distro
-    description: |
-      Optional configuration to support use of additional sources such as:
-      .
-        - ppa:myteam/ppa
-        - deb http://my.archive.com/ubuntu main|KEYID
-      .
-      Note that this is used only for Cisco n1kv plugin.
   l3-agent:
     type: string
     default: enable 
