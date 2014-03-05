@@ -42,8 +42,6 @@ CONFIGS = register_configs()
 @hooks.hook('install')
 def install():
     configure_installation_source(config('openstack-origin'))
-    if config('profile-support') == 'cisco':
-        get_cisco_repository()
     apt_update(fatal=True)
     apt_install(filter_installed_packages(PACKAGES), fatal=True)
 
