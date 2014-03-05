@@ -67,6 +67,9 @@ function update_ovs_interfaces {
     juju-log "copy the compiled template to /etc/network/"
     cp templates/eth-config.compiled /etc/network/interfaces
 
+    juju-log "unset the ip address for physical interface"
+    ifconfig ${physicalinterfaceforovs} 0.0.0.0 0.0.0.0
+
     juju-log "restart the networking service"
     /etc/init.d/networking restart
 }
