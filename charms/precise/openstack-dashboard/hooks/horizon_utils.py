@@ -143,11 +143,3 @@ def do_openstack_upgrade(configs):
     # set CONFIGS to load templates from new release
     configs.set_release(openstack_release=new_os_rel)
 
-def get_cisco_repository():
-    '''
-    Gets the Cisco Nexus 1000V repository
-    '''
-    src = config('cisco-source')
-    if src.startswith('ppa:') or src.startswith('deb'):
-        configure_installation_source(src)
-

@@ -29,8 +29,7 @@ from horizon_utils import (
     restart_map,
     LOCAL_SETTINGS, HAPROXY_CONF,
     enable_ssl,
-    do_openstack_upgrade,
-    get_cisco_repository
+    do_openstack_upgrade
 )
 from charmhelpers.contrib.hahelpers.apache import install_ca_cert
 from charmhelpers.contrib.hahelpers.cluster import get_hacluster_config
