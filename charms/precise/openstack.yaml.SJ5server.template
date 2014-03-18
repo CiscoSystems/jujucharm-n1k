@@ -1,4 +1,4 @@
-troy and bootstrap
+#Destroy and bootstrap
 #juju destroy-environment
 #juju bootstrap --constraints tags=bootstrap -v
 
