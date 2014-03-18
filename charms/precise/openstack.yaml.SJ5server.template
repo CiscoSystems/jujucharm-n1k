@@ -1,0 +1,62 @@
+troy and bootstrap
+#juju destroy-environment
+#juju bootstrap --constraints tags=bootstrap -v
+
+#Deploy services
+juju set-constraints tags=mysql
+juju deploy --repository=. local:precise/mysql
+juju set-constraints tags=rabbitmq-server
+juju deploy --repository=. local:precise/rabbitmq-server
+juju set-constraints tags=nova-cloud-controller
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/nova-cloud-controller 
+juju set-constraints tags=juju-gui
+juju deploy juju-gui
+juju set-constraints tags=keystone
+juju deploy --config ./openstack.yaml --repository=. local:precise/keystone
+juju set-constraints tags=glance
+juju deploy --config ./openstack.yaml --repository=. local:precise/glance
+juju set-constraints tags=quantum-gateway
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/quantum-gateway
+juju set-constraints tags=cinder
+juju add-unit quantum-gateway
+juju set-constraints tags=horizon
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/openstack-dashboard
+
+juju set-constraints tags=
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/nova-compute 
+juju set-constraints tags=
+juju add-unit nova-compute
+
+# Deploy VEM and VXLAN GW
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/vem
+juju deploy -u --repository=. local:precise/vxlan-gateway
+
+#deploy VSM
+juju deploy -u --config ./openstack.yaml --repository=. local:precise/vsm
+
+juju add-relation keystone mysql
+juju add-relation glance mysql
+juju add-relation glance keystone
+juju add-relation glance nova-cloud-controller
+#juju add-relation cinder mysql
+#juju add-relation cinder rabbitmq-server
+#juju add-relation cinder keystone
+#juju add-relation cinder glance
+#juju add-relation cinder nova-cloud-controller
+juju add-relation nova-cloud-controller mysql
+juju add-relation nova-cloud-controller rabbitmq-server
+juju add-relation nova-cloud-controller keystone
+juju add-relation quantum-gateway mysql
+juju add-relation quantum-gateway rabbitmq-server
+juju add-relation quantum-gateway nova-cloud-controller
+juju add-relation nova-compute mysql
+juju add-relation nova-compute:amqp rabbitmq-server:amqp
+juju add-relation nova-compute glance
+juju add-relation nova-compute nova-cloud-controller
+juju add-relation openstack-dashboard keystone
+juju add-relation nova-cloud-controller vxlan-gateway
+
+# VEM is a subordinate charm so we need to add relation to deply the VEM on compute and network nodes
+juju add-relation nova-compute vem
+juju add-relation quantum-gateway vem
+
